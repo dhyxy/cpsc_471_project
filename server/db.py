@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+from enum import Enum
 import sqlite3
 
 import click
@@ -18,6 +20,10 @@ def close_db(e=None):
 def init_db():
     db = get_db()
 
+    cursor = db.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.close()
+
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
@@ -29,3 +35,33 @@ def init_db_command():
 def init_app(app: Flask):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+
+
+class UserType(Enum):
+    PHOTOGRAPHER = 'photographer'
+    CLIENT = 'client'
+
+    @staticmethod
+    def from_string(string: str):
+        for val in UserType:
+            if val.value == string:
+                return val
+        raise ValueError(f"{string} not included in {__class__}")
+
+USER_TYPE_VALUES = [val.value for val in UserType]
+
+@dataclass
+class User:
+    email: str
+    password: str
+    name: str
+    phone_number: str
+    user_type: UserType
+
+    CREATE = "INSERT INTO user (email, password, name, phone_number, type) VALUES (?, ?, ?, ?, ?)"
+
+    @staticmethod
+    def create(email: str, password: str, name: str, phone_number: str, user_type: UserType):
+        db = get_db()
+        db.execute(User.CREATE, (email, password, name, phone_number, user_type))
+        db.commit()
