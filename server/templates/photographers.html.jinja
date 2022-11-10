@@ -1,0 +1,13 @@
+{% extends 'base.html.jinja' %}
+
+{% block title %} photographers! {% endblock %}
+
+{% block content %}
+{% for photographer in photographers %}
+
+<div class="photographer">
+    <a class="photographer-name">{{ photographer['name'] }}</a>
+    <p class="photographer-body">email: {{ photographer['email'] }}</p>    
+</div>
+{% endfor %}
+{% endblock %}
