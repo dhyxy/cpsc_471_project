@@ -9,7 +9,8 @@ core = Blueprint('core', __name__)
 
 @core.route('/')
 def home():
-    return render_template('home.html.jinja')
+    photographers = db.User.list_photographers()
+    return render_template('home.html.jinja', photographers=photographers)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -76,6 +77,11 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('.home'))
+
+@core.route('/photographers/<email>')
+def photographer(email: str):
+    photographer_ = db.User.read(email)
+    return render_template('photographer.html.jinja', photographer=photographer_)
 
 @core.before_app_request
 def load_user():

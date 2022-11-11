@@ -63,6 +63,11 @@ class User:
     CREATE = "INSERT INTO user (email, password, name, phone_number, type) VALUES (?, ?, ?, ?, ?)"
     READ = "SELECT * FROM user WHERE email = ?"
 
+    LIST_PHOTOGRAPHERS = "SELECT * FROM user WHERE type = 'photographer'"
+
+    def __post_init__(self):
+        self.type = UserType.from_string(str(self.type))
+
     @staticmethod
     def create(email: str, password: str, name: str, phone_number: str, type: UserType):
         db = get_db()
@@ -76,5 +81,11 @@ class User:
         if not data:
             raise ValueError(f"no user exists with email: {email}")
         user = User(**data)
-        user.type = UserType.from_string(data['type'])
         return user
+    
+    @staticmethod
+    def list_photographers() -> list[User]:
+        db = get_db()
+        data = db.execute(User.LIST_PHOTOGRAPHERS).fetchall()
+        photographers = [User(**row) for row in data]
+        return photographers

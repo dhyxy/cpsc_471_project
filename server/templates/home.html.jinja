@@ -11,4 +11,10 @@ welcome to home!
     <a href="{{ url_for('core.register') }}">register</a>
     <a href="{{ url_for('core.login') }}">login</a>
 {% endif %}
+
+<div class="photographers-list">
+    {% for photographer in photographers %}
+        <a href="{{ url_for('core.photographer', email=photographer['email']) }}">{{ photographer.name }}</a>
+    {% endfor %}
+</div>
 {% endblock %}
