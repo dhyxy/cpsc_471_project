@@ -1,6 +1,9 @@
+import functools
 from sqlite3 import IntegrityError
 from server import db
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
+
+EMAIL_SESSION_KEY = 'user_email'
 
 core = Blueprint('core', __name__)
 
@@ -29,6 +32,9 @@ def register():
             return render_register_template(error=err)
 
         try:
+            # TODO(1): for the project we aren't hashing the password for simplicity
+            # if you end up deploying this, hash the passwords on registration
+            # and check password on login with hash
             db.User.create(email, password, name, phone_number, user_type.value) # type: ignore 
             flash("Thank you for registering")
         except IntegrityError:
@@ -43,5 +49,51 @@ def render_register_template(**context):
 @core.route('/login', methods=('GET', 'POST',))
 def login():
     if request.method == 'POST':
-        pass
+        email = request.form['email']
+        password = request.form['password']
+        
+        user = None
+        err = None
+        try:
+            user = db.User.read(email)
+        except ValueError as e:
+            err = str(e)
+        
+        # TODO(1): same as first comment, this should be comparing password
+        if user and user.password != password:
+            err = "Incorrect password"
+        
+        if user and not err:
+            session.clear()
+            session[EMAIL_SESSION_KEY] = user.email
+            return redirect(url_for('.home'))
+        elif err:
+            flash(err)
+        
     return render_template('login.html.jinja')
+
+@core.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('.home'))
+
+@core.before_app_request
+def load_user():
+    user_email = session.get(EMAIL_SESSION_KEY)
+
+    if user_email:
+        g.user = db.User.read(user_email)
+
+@core.context_processor
+def inject_constants():
+    return dict(EMAIL_SESSION_KEY=EMAIL_SESSION_KEY)
+
+def login_required(view):
+    """Decorator to restrict a view to be for logged in users only."""
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('.login'))
+        return view(**kwargs)
+
+    return wrapped_view

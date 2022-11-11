@@ -4,4 +4,11 @@
 
 {% block content %}
 welcome to home!
+
+{% if session.get(EMAIL_SESSION_KEY) %}
+    <a href="{{ url_for('core.logout') }}">logout</a>
+{% else %}
+    <a href="{{ url_for('core.register') }}">register</a>
+    <a href="{{ url_for('core.login') }}">login</a>
+{% endif %}
 {% endblock %}

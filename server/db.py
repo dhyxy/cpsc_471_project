@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 import sqlite3
@@ -56,12 +58,23 @@ class User:
     password: str
     name: str
     phone_number: str
-    user_type: UserType
+    type: UserType
 
     CREATE = "INSERT INTO user (email, password, name, phone_number, type) VALUES (?, ?, ?, ?, ?)"
+    READ = "SELECT * FROM user WHERE email = ?"
 
     @staticmethod
-    def create(email: str, password: str, name: str, phone_number: str, user_type: UserType):
+    def create(email: str, password: str, name: str, phone_number: str, type: UserType):
         db = get_db()
-        db.execute(User.CREATE, (email, password, name, phone_number, user_type))
+        db.execute(User.CREATE, (email, password, name, phone_number, type))
         db.commit()
+
+    @staticmethod
+    def read(email: str) -> User:
+        db = get_db()
+        data = db.execute(User.READ, (email,)).fetchone()
+        if not data:
+            raise ValueError(f"no user exists with email: {email}")
+        user = User(**data)
+        user.type = UserType.from_string(data['type'])
+        return user
