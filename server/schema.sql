@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS photo;
 DROP TABLE IF EXISTS album;
+DROP TABLE IF EXISTS photographer_available_time;
 DROP TABLE IF EXISTS user_type;
 DROP TABLE IF EXISTS user;
 
@@ -17,6 +18,14 @@ CREATE TABLE user (
     name TEXT NOT NULL,
     phone_number TEXT NOT NULL,
     type TEXT NOT NULL REFERENCES user_type (user_type) ON DELETE CASCADE
+);
+
+CREATE TABLE photographer_available_time (
+    id INTEGER PRIMARY KEY NOT NULL,
+    -- following are datetimes
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
 );
 
 CREATE TABLE album (

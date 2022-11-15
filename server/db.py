@@ -1,12 +1,16 @@
 from __future__ import annotations
+import datetime
 
+import sqlite3
 from dataclasses import dataclass, field
 from enum import Enum
-import sqlite3
 from typing import Optional
 
 import click
 from flask import Flask, current_app, g
+
+from server.decorators import tries_to_commit
+
 
 def get_db():
     if 'db' not in g:
@@ -82,15 +86,12 @@ class User:
         self.type = UserType.from_string(str(self.type))
 
     @staticmethod
-    def create(email: str, password: str, name: str, phone_number: str, type: UserType) -> Optional[User]:
+    @tries_to_commit
+    def create(email: str, password: str, name: str, phone_number: str, type: UserType) -> User:
         db = get_db()
-        try:
-            db.execute(User.CREATE, (email, password, name, phone_number, type))
-            db.commit()
-            return User(email, password, name, phone_number, type)
-        except sqlite3.Error as e:
-            current_app.logger.error(e)
-        return None
+        db.execute(User.CREATE, (email, password, name, phone_number, type))
+        db.commit()
+        return User(email, password, name, phone_number, type)
 
     @staticmethod
     def read(email: str) -> User:
@@ -109,6 +110,48 @@ class User:
         return photographers
 
 @dataclass
+class PhotographerAvailableTime:
+    id: int
+    # these are stored as text in SQLite, parsed to datetime in __post_init__
+    start_time: str
+    end_time: str
+    photographer_email: str
+
+    start_parsed: datetime.datetime = field(init=False)
+    end_parsed: datetime.datetime = field(init=False)
+
+    CREATE = "INSERT INTO photographer_available_time (start_time, end_time, photographer_email) VALUES (?, ?, ?)"
+    READ = "SELECT * FROM photographer_available_time WHERE photographer_email = ?"
+    DELETE = "DELETE FROM photographer_available_time WHERE id = ?"
+
+    def __post_init__(self):
+        self.start_parsed = datetime.datetime.fromisoformat(self.start_time)
+        self.end_parsed = datetime.datetime.fromisoformat(self.end_time)
+    
+    @staticmethod
+    @tries_to_commit
+    def create(start_time: str, end_time: str, photographer_email: str) -> PhotographerAvailableTime:
+        db = get_db()
+        c = db.execute(PhotographerAvailableTime.CREATE, (start_time, end_time, photographer_email))
+        db.commit()
+        assert c.lastrowid is not None # TODO: this is unstable, fix if app is deployed
+        return PhotographerAvailableTime(c.lastrowid, start_time, end_time, photographer_email)
+    
+    @staticmethod
+    def read(photographer_email: str) -> list[PhotographerAvailableTime]:
+        db = get_db()
+        data = db.execute(PhotographerAvailableTime.READ, (photographer_email,))
+        available_times = [PhotographerAvailableTime(**row) for row in data]
+        return available_times
+    
+    @staticmethod
+    @tries_to_commit
+    def delete(id: int) -> None:
+        db = get_db()
+        db.execute(PhotographerAvailableTime.DELETE, (id,))
+        db.commit()
+
+@dataclass
 class Album:
     name: str
     type: str
@@ -120,6 +163,7 @@ class Album:
     READ = "SELECT a.* FROM album a LEFT JOIN user ON a.photographer_email = user.email WHERE a.photographer_email = ?"
 
     def __post_init__(self):
+        # TODO: inefficient, should probably condense into a join
         self.photos = Photo.read(self.name)
 
     @staticmethod
