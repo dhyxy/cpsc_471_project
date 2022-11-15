@@ -23,6 +23,7 @@ def register():
         password = request.form['password']
         name = request.form['name']
         phone_number = request.form['phone_number']
+        user_type = None
         try:
             user_type = db.UserType.from_string(request.form['user_type'])
         except ValueError as e:
@@ -31,14 +32,14 @@ def register():
         if not (email and password and name and phone_number):
             err = "All fields must be entered"
         
-        if err:
-            return render_register_template(error=err)
+        if err or not user_type:
+            return render_register_template(error=err or "Invalid user type?")
 
         try:
             # TODO(1): for the project we aren't hashing the password for simplicity
             # if you end up deploying this, hash the passwords on registration
             # and check password on login with hash
-            db.User.create(email, password, name, phone_number, user_type.value) # type: ignore 
+            db.User.create(email, password, name, phone_number, user_type)
             flash("Thank you for registering")
         except IntegrityError:
             flash(f"Email {email} is already registered")

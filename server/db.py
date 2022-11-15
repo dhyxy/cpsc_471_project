@@ -82,13 +82,14 @@ class User:
     LIST_PHOTOGRAPHERS = "SELECT * FROM user WHERE type = 'photographer'"
 
     def __post_init__(self):
-        self.type = UserType.from_string(str(self.type))
+        if not isinstance(self.type, UserType):
+            self.type = UserType.from_string(str(self.type))
 
     @staticmethod
     @tries_to_commit
     def create(email: str, password: str, name: str, phone_number: str, type: UserType) -> User:
         db = get_db()
-        db.execute(User.CREATE, (email, password, name, phone_number, type))
+        db.execute(User.CREATE, (email, password, name, phone_number, type.value))
         db.commit()
         return User(email, password, name, phone_number, type)
 
