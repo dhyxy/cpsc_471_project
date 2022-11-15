@@ -19,7 +19,7 @@ welcome to home!
 <div class="photographers-list">
     <h3>photographers</h3>
     {% for photographer in photographers %}
-        <a href="{{ url_for('core.photographer', email=photographer['email']) }}">{{ photographer.name }}</a>
+    <a href="{{ url_for('core.photographer', email=photographer['email']) }}">{{ photographer.name }}</a>
     {% endfor %}
 </div>
 {% endif %}
@@ -35,6 +35,7 @@ welcome to home!
             <p>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</p>
             <p>${{ appointment['pricing']}}</p>
             <p>package content: {{ appointment['items'] }}</p>
+            <a href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">get invoice</a>
         </div>
     {% endfor %}
 </div>

@@ -102,7 +102,7 @@ def profile():
         flash("You don't have sufficient permissions to access this page")
         return redirect(url_for('.home'))
 
-    available_times = db.PhotographerAvailableTime.read(user.email)
+    available_times = db.PhotographerAvailableTime.read_all(user.email)
 
     if request.method == 'POST':
         start = request.form['start']
@@ -127,11 +127,22 @@ def book(photographer_email: str):
         return redirect(url_for('.photographer', email=photographer_email))
     
     photographer = db.User.read(photographer_email)
-    available_times = db.PhotographerAvailableTime.read(photographer_email, False)
-    packages = db.Package.read(photographer.email)
+    available_times = db.PhotographerAvailableTime.read_all(photographer_email, False)
+    packages = db.Package.read_all(photographer.email)
     packages.sort(key=lambda package: package.pricing)
 
     return render_template('book.html.jinja', photographer=photographer, available_times=available_times, packages=packages)
+
+@login_required
+@core.route('/invoice/<int:appointment_id>')
+def invoice(appointment_id: int):
+    appointment = db.Appointment.read(appointment_id)
+    time = db.PhotographerAvailableTime.read(appointment.time_id)
+    package = db.Package.read(appointment.package_id)
+    photographer = db.User.read(appointment.photographer_email)
+
+    invoice = db.Invoice.create(datetime.datetime.now(), package.pricing, package.items, appointment.id)
+    return render_template('invoice.html.jinja', invoice=invoice, time=time, photographer=photographer)
 
 # TODO: this should be a `DELETE` method, written as POST to save time for project
 @core.route("/available-time/delete/<int:id>", methods=('POST',))

@@ -66,7 +66,7 @@ CREATE TABLE invoice (
     date TEXT NOT NULL,
     total_cost INTEGER NOT NULL,
     cost TEXT NOT NULL,
-    appointment_id INTEGER NOT NULL REFERENCES appointment (id) ON DELETE CASCADE
+    appointment_id INTEGER UNIQUE NOT NULL REFERENCES appointment (id) ON DELETE CASCADE
 );
 
 CREATE TABLE form (

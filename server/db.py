@@ -4,6 +4,7 @@ import datetime
 import sqlite3
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Optional
 
 import click
 from flask import Flask, current_app, g
@@ -123,7 +124,8 @@ class PhotographerAvailableTime:
     end_parsed: datetime.datetime = field(init=False)
 
     CREATE = "INSERT INTO photographer_available_time (start_time, end_time, photographer_email) VALUES (?, ?, ?)"
-    READ = "SELECT * FROM photographer_available_time WHERE photographer_email = ?"
+    READ = "SELECT * FROM photographer_available_time where id = ?"
+    READ_ALL = "SELECT * FROM photographer_available_time WHERE photographer_email = ?"
     READ_AVAILABLE = "SELECT * FROM photographer_available_time WHERE id NOT IN (SELECT time_id FROM appointment) AND photographer_email = ?"
     DELETE = "DELETE FROM photographer_available_time WHERE id = ?"
 
@@ -141,14 +143,20 @@ class PhotographerAvailableTime:
         return PhotographerAvailableTime(c.lastrowid, start_time, end_time, photographer_email)
     
     @staticmethod
-    def read(photographer_email: str, include_booked = True) -> list[PhotographerAvailableTime]:
+    def read_all(photographer_email: str, include_booked = True) -> list[PhotographerAvailableTime]:
         db = get_db()
         data = db.execute(
-            PhotographerAvailableTime.READ if include_booked else PhotographerAvailableTime.READ_AVAILABLE,
+            PhotographerAvailableTime.READ_ALL if include_booked else PhotographerAvailableTime.READ_AVAILABLE,
             (photographer_email,)
         )
         available_times = [PhotographerAvailableTime(**row) for row in data]
         return available_times
+    
+    @staticmethod
+    def read(id: int) -> PhotographerAvailableTime:
+        db = get_db()
+        data = db.execute(PhotographerAvailableTime.READ, (id,)).fetchone()
+        return PhotographerAvailableTime(**data)
     
     @staticmethod
     @tries_to_commit
@@ -164,14 +172,21 @@ class Package:
     items: str
     photographer_email: str
 
-    SELECT = "SELECT * FROM package WHERE photographer_email = ?"
+    READ_ALL = "SELECT * FROM package WHERE photographer_email = ?"
+    READ = "SELECT * FROM package WHERE id = ?"
 
     @staticmethod
-    def read(photographer_email: str) -> list[Package]:
+    def read_all(photographer_email: str) -> list[Package]:
         db = get_db()
-        data = db.execute(Package.SELECT, (photographer_email,))
+        data = db.execute(Package.READ_ALL, (photographer_email,))
         packages = [Package(**row) for row in data]
         return packages
+
+    @staticmethod
+    def read(id: int) -> Package:
+        db = get_db()
+        data = db.execute(Package.READ, (id,)).fetchone()
+        return Package(**data)
 
 @dataclass
 class Appointment:
@@ -185,6 +200,8 @@ class Appointment:
     READ_CLIENT = "SELECT * FROM appointment WHERE client_email = ?"
     READ_PHOTOGRAPHER = "SELECT * FROM appointment WHERE photographer_email = ?"
 
+    READ = "SELECT * FROM appointment WHERE id = ?"
+
     @staticmethod
     @tries_to_commit
     def create(time_id: int, package_id: int, photographer_email: str, client_email: str) -> Appointment:
@@ -195,12 +212,53 @@ class Appointment:
         return Appointment(c.lastrowid, time_id, package_id, photographer_email, client_email)
 
     @staticmethod
-    def read(email: str, is_client = True) -> list[Appointment]:
+    def read_all(email: str, is_client = True) -> list[Appointment]:
         db = get_db()
         data = db.execute(Appointment.READ_CLIENT if is_client else Appointment.READ_PHOTOGRAPHER, (email,)).fetchall()
         appointments = [Appointment(**row) for row in data]
         return appointments
     
+    @staticmethod
+    def read(appointment_id: int) -> Appointment:
+        db = get_db()
+        data = db.execute(Appointment.READ, (appointment_id,)).fetchone()
+        return Appointment(**data)
+    
+@dataclass
+class Invoice:
+    id: int
+    date: str
+    total_cost: int
+    cost: str
+    appointment_id: int
+
+    parsed_date: datetime.datetime = field(init=False)
+
+    CREATE = "INSERT INTO invoice (date, total_cost, cost, appointment_id) VALUES (?, ?, ?, ?)"
+    READ = "SELECT * FROM invoice WHERE appointment_id = ?"
+
+    def __post_init__(self):
+        self.parsed_date = datetime.datetime.fromisoformat(self.date)
+
+    @staticmethod
+    @tries_to_commit
+    def create(date: datetime.datetime, total_cost: int, cost: str, appointment_id: int) -> Invoice:
+        invoice = Invoice.read(appointment_id)
+        if invoice:
+            return invoice
+        db = get_db()
+        date_str = date.isoformat()
+        c = db.execute(Invoice.CREATE, (date_str, total_cost, cost, appointment_id))
+        db.commit()
+        assert c.lastrowid is not None # TODO: unstable
+        return Invoice(c.lastrowid, date_str, total_cost, cost, appointment_id)
+    
+    @staticmethod
+    def read(appointment_id: int) -> Optional[Invoice]:
+        db = get_db()
+        data = db.execute(Invoice.READ, (appointment_id,)).fetchone()
+        return None if not data else Invoice(**data)
+
 @dataclass
 class Album:
     name: str
