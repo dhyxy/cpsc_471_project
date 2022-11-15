@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 import sqlite3
+from typing import Optional
 
 import click
 from flask import Flask, current_app, g
@@ -25,9 +26,21 @@ def init_db():
     cursor = db.cursor()
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.close()
+    db.commit()
 
     with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+        script = f.read().decode('utf8')
+        try:
+            db.executescript(script)
+        except sqlite3.IntegrityError as e:
+            click.echo(e)
+    
+    cursor = db.cursor()
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo@email.com', 'password', 'photo1', '123', 'photographer');")
+    cursor.execute("INSERT INTO album(name, type, release_type, photographer_email) VALUES ('alb1', 'photos', 'idk', 'photo@email.com');")
+    cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'alb1');")
+    cursor.close()
+    db.commit()
 
 @click.command('init-db')
 def init_db_command():
@@ -69,10 +82,15 @@ class User:
         self.type = UserType.from_string(str(self.type))
 
     @staticmethod
-    def create(email: str, password: str, name: str, phone_number: str, type: UserType):
+    def create(email: str, password: str, name: str, phone_number: str, type: UserType) -> Optional[User]:
         db = get_db()
-        db.execute(User.CREATE, (email, password, name, phone_number, type))
-        db.commit()
+        try:
+            db.execute(User.CREATE, (email, password, name, phone_number, type))
+            db.commit()
+            return User(email, password, name, phone_number, type)
+        except sqlite3.Error as e:
+            current_app.logger.error(e)
+        return None
 
     @staticmethod
     def read(email: str) -> User:
@@ -89,3 +107,39 @@ class User:
         data = db.execute(User.LIST_PHOTOGRAPHERS).fetchall()
         photographers = [User(**row) for row in data]
         return photographers
+
+@dataclass
+class Album:
+    name: str
+    type: str
+    release_type: str
+    photographer_email: str
+
+    photos: list[Photo] = field(default_factory=list, init=False)
+
+    READ = "SELECT a.* FROM album a LEFT JOIN user ON a.photographer_email = user.email WHERE a.photographer_email = ?"
+
+    def __post_init__(self):
+        self.photos = Photo.read(self.name)
+
+    @staticmethod
+    def read(photographer_email: str) -> list[Album]:
+        db = get_db()
+        data = db.execute(Album.READ, (photographer_email,)).fetchall()
+        albums = [Album(**row) for row in data]
+        return albums
+
+@dataclass
+class Photo:
+    id: int
+    pathname: str
+    album_name: str
+    
+    READ = "SELECT * FROM photo WHERE album_name = ?"
+
+    @staticmethod
+    def read(album_name: str) -> list[Photo]:
+        db = get_db()
+        data = db.execute(Photo.READ, (album_name,)).fetchall()
+        photos = [Photo(**row) for row in data]
+        return photos

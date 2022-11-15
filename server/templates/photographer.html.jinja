@@ -5,6 +5,20 @@
 {% block content %}
     {{ photographer.name }}
     {{ photographer.email }}
+
+    <section class="albums">
+    <h3>albums</h3>
+    {% for album in albums %}
+        <div class="album-container">
+            {{ album.name }} {{ album.type }} {{ album.release_type }}
+            <div class="photos-container">
+                {% for photo in album.photos %}
+                    {{ photo.id }} {{ photo.pathname }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </section>
 {% endblock %}
 
 

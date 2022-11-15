@@ -81,7 +81,8 @@ def logout():
 @core.route('/photographers/<email>')
 def photographer(email: str):
     photographer_ = db.User.read(email)
-    return render_template('photographer.html.jinja', photographer=photographer_)
+    albums = db.Album.read(email)
+    return render_template('photographer.html.jinja', photographer=photographer_, albums=albums)
 
 @core.before_app_request
 def load_user():

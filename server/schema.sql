@@ -1,12 +1,14 @@
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS photo;
+DROP TABLE IF EXISTS album;
 DROP TABLE IF EXISTS user_type;
+DROP TABLE IF EXISTS user;
 
 CREATE TABLE user_type (
-    type TEXT PRIMARY KEY NOT NULL
+    user_type TEXT PRIMARY KEY NOT NULL
 );
 
-INSERT INTO user_type(type) VALUES ('photographer');
-INSERT INTO user_type(type) VALUES ('client');
+INSERT INTO user_type (user_type) VALUES ('photographer');
+INSERT INTO user_type (user_type) VALUES ('client');
 -- NOTE: frozen table do not modify
 
 CREATE TABLE user (
@@ -14,6 +16,18 @@ CREATE TABLE user (
     password TEXT NOT NULL,
     name TEXT NOT NULL,
     phone_number TEXT NOT NULL,
-    type TEXT NOT NULL REFERENCES user_type(type) on UPDATE CASCADE
+    type TEXT NOT NULL REFERENCES user_type (user_type) ON DELETE CASCADE
 );
 
+CREATE TABLE album (
+    name TEXT PRIMARY KEY NOT NULL,
+    type TEXT NOT NULL,
+    release_type TEXT NOT NULL,
+    photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
+ );
+
+ CREATE TABLE photo (
+    id INTEGER PRIMARY KEY NOT NULL,
+    pathname TEXT NOT NULL,
+    album_name TEXT NOT NULL REFERENCES album (name) ON DELETE CASCADE
+ );
