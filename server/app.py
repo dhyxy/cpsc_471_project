@@ -1,5 +1,6 @@
 import datetime
 from sqlite3 import IntegrityError
+import sqlite3
 from server import db
 from server.decorators import login_required
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -11,8 +12,13 @@ core = Blueprint('core', __name__)
 @core.route('/')
 def home():
     photographers = db.User.list_photographers()
-    user: db.User = g.get('user')
-    return render_template('home.html.jinja', photographers=photographers, is_photographer=user and user.type is db.UserType.PHOTOGRAPHER)
+    is_photographer = False
+    appointments = []
+    if 'user' in g:
+        user: db.User = g.get('user')
+        is_photographer = user and user.type is db.UserType.PHOTOGRAPHER
+        appointments = fetch_appointments(user.email, is_photographer)
+    return render_template('home.html.jinja', photographers=photographers, is_photographer=is_photographer, appointments=appointments)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -106,6 +112,27 @@ def profile():
     
     return render_template('profile.html.jinja', user=user, available_times=available_times)
 
+@login_required
+@core.route('/book/<photographer_email>', methods=('GET', 'POST'))
+def book(photographer_email: str):
+    user: db.User = g.user
+    if not user or user.type is not db.UserType.CLIENT:
+        flash("You must be a logged in client to book with this photographer")
+        return redirect(url_for('.home'))
+
+    if request.method == 'POST':
+        time_id = int(request.form['time_id'])
+        package_id = int(request.form['package_id'])
+        db.Appointment.create(time_id, package_id, photographer_email, user.email)
+        return redirect(url_for('.photographer', email=photographer_email))
+    
+    photographer = db.User.read(photographer_email)
+    available_times = db.PhotographerAvailableTime.read(photographer_email, False)
+    packages = db.Package.read(photographer.email)
+    packages.sort(key=lambda package: package.pricing)
+
+    return render_template('book.html.jinja', photographer=photographer, available_times=available_times, packages=packages)
+
 # TODO: this should be a `DELETE` method, written as POST to save time for project
 @core.route("/available-time/delete/<int:id>", methods=('POST',))
 def delete_available_time(id: int):
@@ -123,3 +150,16 @@ def load_user():
 def inject_constants():
     return dict(EMAIL_SESSION_KEY=EMAIL_SESSION_KEY)
 
+def fetch_appointments(email: str, is_photographer: bool):
+    db_ = db.get_db()
+    data = db_.execute(
+        f"SELECT * FROM appointment a LEFT JOIN photographer_available_time pat ON a.time_id = pat.id LEFT JOIN package p ON a.package_id = p.id WHERE a.{'photographer_email' if is_photographer else 'client_email'} = ?", 
+        (email,)
+    ).fetchall()
+    return [_parse_times(row) for row in data]
+
+def _parse_times(appointment: sqlite3.Row):
+    parsed_appointment = dict(appointment)
+    parsed_appointment['start_time'] = datetime.datetime.fromisoformat(appointment['start_time'])
+    parsed_appointment['end_time'] = datetime.datetime.fromisoformat(appointment['end_time'])
+    return parsed_appointment

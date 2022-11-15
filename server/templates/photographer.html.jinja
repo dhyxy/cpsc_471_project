@@ -19,6 +19,16 @@
         </div>
     {% endfor %}
     </section>
+
+    {% if session.get(EMAIL_SESSION_KEY) %}
+        <section class="booking">
+            {# TODO #}
+            <a href="#">contact</a>
+            <a href="{{ url_for('core.book', photographer_email=photographer.email) }}">book a session!</a>
+        </section>
+    {% else %}
+        <p>register to book with this photographer!</p>
+    {% endif %}
 {% endblock %}
 
 

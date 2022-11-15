@@ -42,6 +42,8 @@ def init_db():
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo@email.com', 'password', 'photo1', '123', 'photographer');")
     cursor.execute("INSERT INTO album(name, type, release_type, photographer_email) VALUES ('alb1', 'photos', 'idk', 'photo@email.com');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'alb1');")
+    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
     cursor.close()
     db.commit()
 
@@ -122,6 +124,7 @@ class PhotographerAvailableTime:
 
     CREATE = "INSERT INTO photographer_available_time (start_time, end_time, photographer_email) VALUES (?, ?, ?)"
     READ = "SELECT * FROM photographer_available_time WHERE photographer_email = ?"
+    READ_AVAILABLE = "SELECT * FROM photographer_available_time WHERE id NOT IN (SELECT time_id FROM appointment) AND photographer_email = ?"
     DELETE = "DELETE FROM photographer_available_time WHERE id = ?"
 
     def __post_init__(self):
@@ -138,9 +141,12 @@ class PhotographerAvailableTime:
         return PhotographerAvailableTime(c.lastrowid, start_time, end_time, photographer_email)
     
     @staticmethod
-    def read(photographer_email: str) -> list[PhotographerAvailableTime]:
+    def read(photographer_email: str, include_booked = True) -> list[PhotographerAvailableTime]:
         db = get_db()
-        data = db.execute(PhotographerAvailableTime.READ, (photographer_email,))
+        data = db.execute(
+            PhotographerAvailableTime.READ if include_booked else PhotographerAvailableTime.READ_AVAILABLE,
+            (photographer_email,)
+        )
         available_times = [PhotographerAvailableTime(**row) for row in data]
         return available_times
     
@@ -151,6 +157,50 @@ class PhotographerAvailableTime:
         db.execute(PhotographerAvailableTime.DELETE, (id,))
         db.commit()
 
+@dataclass
+class Package:
+    id: int
+    pricing: int
+    items: str
+    photographer_email: str
+
+    SELECT = "SELECT * FROM package WHERE photographer_email = ?"
+
+    @staticmethod
+    def read(photographer_email: str) -> list[Package]:
+        db = get_db()
+        data = db.execute(Package.SELECT, (photographer_email,))
+        packages = [Package(**row) for row in data]
+        return packages
+
+@dataclass
+class Appointment:
+    id: int
+    time_id: int
+    package_id: int
+    photographer_email: str
+    client_email: str
+
+    CREATE = "INSERT INTO appointment (time_id, package_id, photographer_email, client_email) VALUES (?, ?, ?, ?)"
+    READ_CLIENT = "SELECT * FROM appointment WHERE client_email = ?"
+    READ_PHOTOGRAPHER = "SELECT * FROM appointment WHERE photographer_email = ?"
+
+    @staticmethod
+    @tries_to_commit
+    def create(time_id: int, package_id: int, photographer_email: str, client_email: str) -> Appointment:
+        db = get_db()
+        c = db.execute(Appointment.CREATE, (time_id, package_id, photographer_email, client_email))
+        db.commit()
+        assert c.lastrowid is not None # TODO unstable, fix if deployed
+        return Appointment(c.lastrowid, time_id, package_id, photographer_email, client_email)
+
+    @staticmethod
+    def read(email: str, is_client = True) -> list[Appointment]:
+        db = get_db()
+        data = db.execute(Appointment.READ_CLIENT if is_client else Appointment.READ_PHOTOGRAPHER, (email,)).fetchall()
+        appointments = [Appointment(**row) for row in data]
+        return appointments
+    
 @dataclass
 class Album:
     name: str
