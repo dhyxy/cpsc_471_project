@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS feedback_form;
+DROP TABLE IF EXISTS form;
+DROP TABLE IF EXISTS invoice;
+DROP TABLE IF EXISTS appointment;
+DROP TABLE IF EXISTS package;
 DROP TABLE IF EXISTS photo;
 DROP TABLE IF EXISTS album;
 DROP TABLE IF EXISTS photographer_available_time;
@@ -40,3 +45,38 @@ CREATE TABLE album (
     pathname TEXT NOT NULL,
     album_name TEXT NOT NULL REFERENCES album (name) ON DELETE CASCADE
  );
+
+CREATE TABLE package (
+    id INTEGER PRIMARY KEY NOT NULL,
+    pricing INTEGER NOT NULL,
+    items TEXT NOT NULL,
+    photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
+);
+
+CREATE TABLE appointment (
+    id INTEGER PRIMARY KEY NOT NULL,
+    time_id INTEGER NOT NULL REFERENCES photographer_available_time (id) ON DELETE CASCADE,
+    photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE,
+    client_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
+);
+
+CREATE TABLE invoice (
+    id INTEGER PRIMARY KEY NOT NULL,
+    date TEXT NOT NULL,
+    total_cost INTEGER NOT NULL,
+    cost TEXT NOT NULL,
+    appointment_id INTEGER NOT NULL REFERENCES appointment (id) ON DELETE CASCADE
+);
+
+CREATE TABLE form (
+    id INTEGER PRIMARY KEY NOT NULL,
+    message TEXT NOT NULL,
+    client_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE,
+    photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
+);
+
+CREATE TABLE feedback_form (
+    id INTEGER PRIMARY KEY NOT NULL,
+    form_id INTEGER NOT NULL REFERENCES form (id) ON DELETE CASCADE,
+    invoice_id INTEGER NOT NULL REFERENCES invoice (id) ON DELETE CASCADE
+);

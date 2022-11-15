@@ -4,7 +4,6 @@ import datetime
 import sqlite3
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 import click
 from flask import Flask, current_app, g
