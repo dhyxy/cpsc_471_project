@@ -1,0 +1,105 @@
+body {
+  height: 100vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0;
+  overflow-x: hidden;
+}
+
+.header {
+  overflow: hidden;
+  background-color: rgba(250, 165, 225, 0.6);
+  padding: 4px 4px;
+  border-bottom: 1px solid black;
+  font-family: "Pacifico", cursive;
+  font-size: 10px;
+}
+
+/* Style the header links */
+.header a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 15px;
+  text-decoration: wavy;
+  font-size: 16px;
+  line-height: 25px;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+
+/* Style the logo link (notice that we set the same value of line-height and font-size to prevent the header to increase when the font gets bigger */
+
+.log {
+  height: 63px;
+  width: 90px;
+  margin-left: 20px;
+  background-color: rgb(255, 255, 255, 0.9);
+  border: 2px dotted black;
+  border-radius: 4px;
+}
+/* Change the background color on mouse-over */
+.header a:hover {
+  background-color: rgb(77, 157, 232);
+  color: black;
+}
+
+/* Style the active/current link*/
+.header a.active {
+  background-color: rgb(77, 157, 232);
+  color: white;
+  border: 1px solid black;
+}
+
+/* Float the link section to the right */
+.header-right {
+  float: right;
+}
+
+.text-center {
+  font-size: 13px;
+  position: absolute;
+  margin-bottom: 0;
+  width: 100%;
+  height: 23px;
+  padding-top: 5px;
+  border-top: 1px solid black;
+  text-align: center;
+  background-color: rgba(250, 165, 225, 0.6);
+}
+.foot {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+footer {
+  overflow: hidden;
+}
+
+/*here is where the specific CSS begins!*/
+
+.home-container {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
+  word-wrap: break-word;
+  text-align: center;
+  width: 655px;
+  font-family: "Pacifico", cursive;
+  font-weight: 200;
+  line-height: 2;
+}
+
+.mainPageImages {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+}
+.homeBoudoir {
+  height: 400px;
+  width: 270px;
+  padding: 6px;
+}
