@@ -1,0 +1,21 @@
+{% extends 'base.html.jinja' %}
+
+{% block title %} appointment {% endblock %}
+{%set active_page = 'appointment'%}
+
+{% block content %}
+    <h3>appointments</h3>
+    {% for appointment in appointments %}
+        <div class="appointment-container">
+            {% if is_photographer %}
+                <h4>{{ appointment['client_email'] }}</h4>
+            {% else %}
+                <h4><a href="{{ url_for('core.photographer', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
+            {% endif %}
+            <p>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</p>
+            <p>${{ appointment['pricing']}}</p>
+            <p>package content: {{ appointment['items'] }}</p>
+            <a href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">get invoice</a>
+        </div>
+    {% endfor %}
+{% endblock %}
