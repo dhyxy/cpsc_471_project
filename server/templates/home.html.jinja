@@ -1,0 +1,33 @@
+{% extends 'base.html.jinja' %}
+
+{% block title %} home! {% endblock %}
+{%set active_page = 'home'%}
+
+{% block content %}
+<div class = "home-container">
+    <h2 style="letter-spacing:2px">Photography For The Bold</h2>
+    <p>_________</p>
+    <div>
+        <p style="line-height: 2.5">Artistically Danielle is a photgraphy company that specializes in 
+            capturing individuals at their most vulnerable and beautiful. <br> Each
+            image taken is beautifully brushed up and sweet, and showcases the beauty of
+            boudoir.
+        </p>
+        <br>
+        <p style="font-size:11px"><i>“The key to feeling absolutely alive in your own skin lies in your 
+            ability to transform or channel your hardships and dark shadows into sensual energy.”</i></p>
+
+        <p style="font-size:10px"><i>Lebo Grand</i></p>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<div class = "mainPageImages">
+    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample1.jpg')}}>
+    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample2.jpg')}}>
+    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample3.jpg')}}>
+</div>
+<br>
+<br>
+{% endblock %}
