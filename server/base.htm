@@ -1,9 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>My Webpage</title>
-  </head>
-  <body>
-    <h1>My Webpage</h1>
-  </body>
-</html>
+1 a) Find the ISBN, title and total quantity of yellow books that are published by publishers located in 
+	Vancouver and distributed only to schools located in Toronto.
+
+	SELECT 	b.ISBN as "book ISBN", b.title as "book title"
+			COUNT(b.ISBN) as "book quantity"
+			
+	FROM 	book as b, distribute as d, school as s, publisher as p
+	
+	WHERE 	b.color = "yellow"
+	AND		publisher.city = "Vancouver"
+	AND		d.ISBN = b.ISBN
+	AND		d.pname = p.name
+	AND		d.sname = s.name
+	AND		s.city = "Toronto" AND 	NOT EXISTS IN
+										(SELECT		s.city as "school city"
+										 FROM		book as b, distribute as d, school as s, publisher as p
+										 WHERE 		b.color = "yellow"
+										 AND		publisher.city = "Vancouver"
+										 AND		d.ISBN = b.ISBN
+									     AND		d.pname = p.name
+										 AND		d.sname = s.name  
+										 AND	    s.city  != "Toronto")
+										 
+	(so I did everything in toronto - everything in toronto that may have also been delievered elsewhere)
+	
+	
+1 b) Find the names and directors of schools located in Edmonton and receive books titled ‘The Lost Tribe’ 
+	 from publishers located in Montreal.
+	 
+	 
+	 SELECT		s.director as "school director", s.name as "school name"
+	 
+	 FROM		Book as b, School as s, Distribute as d, Publisher as p
+	 
+	 WHERE		s.city = "edmonton"
+	 AND 		b.title = "The Lost Tribe"
+	 AND		p.city = "Montreal"
+	 AND		d.ISBN = b.ISBN
+	 AND		d.pname = p.name
+	 AND		d.sname = s.name 
+	 
+
+1 c) Find the title and total quantity of each book distributed to all schools located in the same city 
+	 as the publisher.
+	 
+	 SELECT		b.title as "book title", d.quantity as "quantity of books distributed"
+	 
+	 FROM		Book as b
+	 NATURAL JOIN Distribute as d
+	 NATURAL JOIN Publisher as p
+	 NATURAL JOIN School as s
+	 
+	 WHERE		s.city = p.city
+	 
+1 d) Find the names and cities of the publishers who distribute books only to schools located in Calgary 
+	 and distribute books to every school in Calgary.
+	 
+	 SELECT		p.name as "publisher name", p.city as "publisher city"
+	 
+	 FROM		Distribute as d
+	 NATURAL JOIN	Book as b
+	 NATURAL JOIN	School as s
+	 NATURAL JOIN	Publisher as p
+	 
+	 WHERE		s.city = "calgary" AND NOT EXISTS IN
+									(SELECT		s.city 
+									
+									 FROM		Distribute as d
+									 NATURAL JOIN	Book as b
+									 NATURAL JOIN	School as s
+									 NATURAL JOIN	Publisher as p
+									 
+									 WHERE 		s.city != "calgary")
+									 
+	INTERSECT
+	
+	SELECT		p.name as "publisher name", p.city as "publisher city"
+	 
+	FROM		Distribute as d
+	NATURAL JOIN	Book as b
+	NATURAL JOIN	School as s
+	NATURAL JOIN	Publisher as p		
+	
+	WHERE		s.city = ALL
+						(SELECT		s.city
+	 
+						 FROM		Distribute as d
+						 NATURAL JOIN	Book as b
+						 NATURAL JOIN	School as s
+						 NATURAL JOIN	Publisher as p		
+						 
+						 WHERE s.city = "Calgary")
+						 
+						 
+1 e) Find the ISBN and title of books distributed to schools located in Ottawa and never distributed to schools 
+	 located in Windsor.
+	 
+	 SELECT		Book.ISBN, Book.
+	 
+	 FROM		Distribute as d
+	 NATURAL JOIN	Book as b
+	 NATURAL JOIN	School as s
+     NATURAL JOIN	Publisher as p	
+	 
+	 WHERE 		s.city = "Ottowa" 
+	 AND 		NOT IN s.city = "Windsor"
+	 
+2 a) Find the names of persons who own at least one house in at least one city of at least one country that has 
+	 a border with Canada
+	 
+	 SELECT		House.owner-name
+	 FROM		House
+	 WHERE		House.stno in
+				(SELECT		Street.stno
+				 FROM		Street
+				 WHERE		Street.city-name in 
+							(SELECT		City.name
+							 FROM		City
+							 WHERE		City.country-name in
+										(SELECT Country.name
+										 FROM 	Country 
+										 INNER JOIN Border (Country.name = Border.country-name-1)
+										 WHERE	Border.country-name-2 = "Canada"
+										 
+										 INTERSECT
+										 
+										 SELECT Country.name
+										 FROM 	Country 
+										 INNER JOIN Border (Country.name = Border.country-name-2)
+										 WHERE	Border.country-name-1 = "Canada"
+										)
+							)
+				)
+				
+				
+2 b) Find street number and city name of the shortest street in each city in every country that has border with Canada
+
+	 SELECT		s.stno as "street number", s.city-name as "street city name"
+	 
+	 FROM		Street as s
+	 NATURAL JOIN	City as c
+	 NATURAL JOIN	Country as cot
+	 
+	 WHERE		cot.name = all
+				(SELECT Country.name
+				 FROM 	Country 
+				 INNER JOIN Border (Country.name = Border.country-name-1)
+		         WHERE	Border.country-name-2 = "Canada"
+										 
+				 INTERSECT
+										 
+				 SELECT Country.name
+				 FROM 	Country 
+				 INNER JOIN Border (Country.name = Border.country-name-2)
+				 WHERE	Border.country-name-1 = "Canada"
+				)	 
+	AND			s.length < all 
+				(SELECT s.length
+				 FROM	Street as s
+				 NATURAL JOIN City as c )
+				 
+
+2 c) Find the names and population sizes of all countries that have a border with the USA.
+	 
