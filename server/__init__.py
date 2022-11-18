@@ -11,13 +11,16 @@ def create_app():
         SECRET_KEY="dev", DATABASE=os.path.join(app.instance_path, "server.sqlite")
     )
     app.config.from_pyfile("config.py")
-    os.makedirs(app.instance_path, exist_ok=True)
 
-    if app.debug:
-        app.config['EXPLAIN_TEMPLATE_LOADING'] = True
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
 
-    from server.app import core
-    app.register_blueprint(core)
+    @app.route("/hello")
+    def hello():
+        return "hello"
 
     db.init_app(app)
+
     return app
