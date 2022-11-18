@@ -1,0 +1,31 @@
+{% extends "base.html.jinja" %}
+
+{# this template is only for photographers atm #}
+{% block title %}profile{% endblock %}
+
+{% block content %}
+<div class="profile-intro">hello {{ user.name }}, welcome to your profile</div>
+
+<div class="available-times-container">
+your available times:
+{% for available_time in available_times %}
+    <div class="available-time">
+        <input type="datetime-local" name="start" id="start" value="{{ available_time.start_time }}" disabled> - <input type="datetime-local" name="end" id="end" value="{{ available_time.end_time }}" disabled>
+        <form action="{{ url_for('core.delete_available_time', id=available_time.id) }}" method="post">
+            <input type="submit" value="X">
+        </form>
+    </div>
+{% endfor %}
+</div>
+
+<div class="add-available-time-container">
+add new available time
+<form method="post">
+    <label for="start">start</label>
+    <input type="datetime-local" name="start" id="start" required>
+    <label for="end">end</label>
+    <input type="datetime-local" name="end" id="end" required>
+    <input type="submit" value="add new available timing">
+</form>
+</div>
+{% endblock content %}
