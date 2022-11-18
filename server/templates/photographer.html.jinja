@@ -1,0 +1,34 @@
+{% extends "base.html.jinja" %}
+
+{% block title %}{{ photographer.name }}{% endblock %}
+
+{% block content %}
+    {{ photographer.name }}
+    {{ photographer.email }}
+
+    <section class="albums">
+    <h3>albums</h3>
+    {% for album in albums %}
+        <div class="album-container">
+            {{ album.name }} {{ album.type }} {{ album.release_type }}
+            <div class="photos-container">
+                {% for photo in album.photos %}
+                    {{ photo.id }} {{ photo.pathname }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </section>
+
+    {% if session.get(EMAIL_SESSION_KEY) %}
+        <section class="booking">
+            {# TODO #}
+            <a href="#">contact</a>
+            <a href="{{ url_for('core.book', photographer_email=photographer.email) }}">book a session!</a>
+        </section>
+    {% else %}
+        <p>register to book with this photographer!</p>
+    {% endif %}
+{% endblock %}
+
+
