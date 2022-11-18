@@ -1,3 +1,4 @@
+-- TODO: add sql schema statements to here
 DROP TABLE IF EXISTS feedback_form;
 DROP TABLE IF EXISTS form;
 DROP TABLE IF EXISTS invoice;
