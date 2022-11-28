@@ -1,42 +1,33 @@
 {% extends 'base.html.jinja' %}
 
 {% block title %} home! {% endblock %}
+{%set active_page = 'home'%}
 
 {% block content %}
-welcome to home!
+<div class = "home-container">
+    <h2 style="letter-spacing:2px; text-decoration:underline">Photography For The Bold</h2>
+    <p>_________</p>
+    <div>
+        <p style="line-height: 2.5">Artistically Danielle is a photgraphy company that specializes in 
+            capturing individuals at their most vulnerable and beautiful. Each
+            image taken is beautifully brushed up and sweet, and showcases the beauty of
+            boudoir.
+        </p>
+        <br>
+        <p style="font-size:11px"><i>“The key to feeling absolutely alive in your own skin lies in your 
+            ability to transform or channel your hardships and dark shadows into sensual energy.”</i></p>
 
-{% if session.get(EMAIL_SESSION_KEY) %}
-    <a href="{{ url_for('core.logout') }}">logout</a>
-    {% if is_photographer %}
-    <a href="{{ url_for('core.profile') }}">profile</a>
-    {% endif %}
-{% else %}
-    <a href="{{ url_for('core.register') }}">register</a>
-    <a href="{{ url_for('core.login') }}">login</a>
-{% endif %}
-
-{% if not is_photographer %}
-<div class="photographers-list">
-    <h3>photographers</h3>
-    {% for photographer in photographers %}
-    <a href="{{ url_for('core.photographer', email=photographer['email']) }}">{{ photographer.name }}</a>
-    {% endfor %}
+        <p style="font-size:10px"><i>Lebo Grand</i></p>
+    </div>
 </div>
-{% endif %}
-<div class="appointments-list">
-    <h3>appointments</h3>
-    {% for appointment in appointments %}
-        <div class="appointment-container">
-            {% if is_photographer %}
-                <h4>{{ appointment['client_email'] }}</h4>
-            {% else %}
-                <h4><a href="{{ url_for('core.photographer', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
-            {% endif %}
-            <p>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</p>
-            <p>${{ appointment['pricing']}}</p>
-            <p>package content: {{ appointment['items'] }}</p>
-            <a href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">get invoice</a>
-        </div>
-    {% endfor %}
+<br>
+<br>
+<br>
+<div class = "mainPageImages">
+    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample1.jpg')}}>
+    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample2.jpg')}}>
+    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample3.jpg')}}>
 </div>
+<br>
+<br>
 {% endblock %}

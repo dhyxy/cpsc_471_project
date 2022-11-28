@@ -9,22 +9,50 @@
 {{ error }}
 </div>
 {% endif %}
-
-<form method="post">
-    <label for="email">email</label>
-    <input type="email" name="email" id="email" required>
-    <label for="password">password</label>
-    <input type="password" name="password" id="password" required>
-    <label for="name">name</label>
-    <input type="text" name="name" id="name" required>
-    <label for="phone_number">phone number</label>
-    <input type="text" name="phone_number" id="phone_number" required>
-    <div class="user_type_selector">
-    <label for="user_type">user type</label>
-        {% for user_type_option in USER_TYPES %}
-            <input type="radio" name="user_type" id="{{ user_type_option }}" value="{{ user_type_option }}">{{user_type_option}}</input> 
-        {% endfor %}
+<div class="positionForm">
+    <div class="main-block">
+        <form method="post">
+            <h1 id="contactHead">  Sign up!  </h1>
+            <br>
+            <label style="float:left; padding-left:20px" for="name">Name:&nbsp;</label>
+            <input style="width:29%" size="20" maxlength="20" type="text" name="name" id="name" required>
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <label style="float:center; padding-left:10px" for="password">Password:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <input style="width:28%" size="20" maxlength="20" type="password" name="password" id="password" required>
+            <br>
+            <br>
+            <label style="float:left; padding-left:20px" for="email">Email: &nbsp;</label>
+            <input style="width:80%" type="email" name="email" id="email" required><span>&nbsp;&nbsp;</span>
+            <br>
+            <br>
+            <label style="float:left; padding-left:20px" for="phone_number">Phone Number: &nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <input style="width:71%; float: left" size="20" maxlength="20" type="text" name="phone_number" id="phone_number" required>
+            <br>
+            <br>
+            <br>
+            <label style="float:left; padding-left:20px"for="user_type">Select User Type:</label>
+            <div style="display:flex; width:35%;">
+                    {% for user_type_option in USER_TYPES %}
+                        {% if user_type_option == "photographer"%}
+                         <span style="padding-left:50%"></span>
+                            <input style="display:inline-block;" type="radio" name="user_type" id="{{ user_type_option }}" value="{{ user_type_option }}">
+                                {{user_type_option}}
+                            </input>
+                        {%else%}
+                        <span style="padding-left:55%"></span>
+                            <input style="display:block;" type="radio" name="user_type" id="{{ user_type_option }}" value="{{ user_type_option }}">
+                                 {{user_type_option}}
+                            </input>
+                        {% endif %}
+                        <br>
+                    {% endfor %}
+            </div>
+            <br>
+            <br>
+            <div class="subButtonPos">
+                <input class = "subButton" type="submit" value="register"></input>
+            </div>
+        </form>
     </div>
-    <input type="submit" value="register">
-</form>
+</div>    
 {% endblock %}
