@@ -170,3 +170,8 @@ input::placeholder {
 .subButton:hover {
   background: #2371a0;
 }
+.apptText {
+  text-align: center;
+  font-family: "Pacifico", cursive;
+  text-decoration: none;
+}
