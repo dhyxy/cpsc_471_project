@@ -96,7 +96,7 @@ class User:
         db.commit()
         return User(email, password, name, phone_number, type)
 
-    @staticmethod
+    @staticmethod 
     def read(email: str) -> User:
         db = get_db()
         data = db.execute(User.READ, (email,)).fetchone()

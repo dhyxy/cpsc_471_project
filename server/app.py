@@ -90,13 +90,13 @@ def logout():
     session.clear()
     return redirect(url_for('.home'))
 
-@core.route('/photographers')
-def photographer():
+@core.route('/gallery')
+def gallery():
     email="photo@email.com"
     photographer_ = db.User.read(email)
     albums = db.Album.read(email)
     print(user_type)
-    return render_template('photographer.html.jinja',user_type=user_type, photographer=photographer_, albums=albums)
+    return render_template('gallery.html.jinja',user_type=user_type, photographer=photographer_, albums=albums)
 
 @login_required
 @core.route('/profile', methods=('GET', 'POST'))

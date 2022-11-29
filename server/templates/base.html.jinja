@@ -16,7 +16,7 @@
                 <img src="{{ url_for('static', filename='danilogo.png') }}" class="log" />
                 <div class="header-right">
                     <a class="inactive {{'active' if active_page == 'home'}}" href="{{url_for('core.home')}}">Home</a>
-                    <a class="inactive {{'active' if active_page == 'photographer'}}" href="{{ url_for('core.photographer') }}">Gallery</a>
+                    <a class="inactive {{'active' if active_page == 'gallery'}}" href="{{ url_for('core.gallery') }}">Gallery</a>
                     {% if session.get(EMAIL_SESSION_KEY) %}
                     {% if user_type=="photographer" %}
                         <a class="inactive {{'active' if active_page == 'profile'}}" href="{{ url_for('core.profile') }}">Profile</a>
