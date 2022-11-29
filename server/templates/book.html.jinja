@@ -4,25 +4,29 @@
 
 {% block content %}
 <div align:"center" class="main-block">
-    <h3 id = "contactHead" style = "text-decoration:none">{{photographer.name}}</h3>
-    <h1 id = "contactHead">Package Selection</h1>
+    <h3 id = "contactHead" style = "text-decoration:underline">Package Selection for {{photographer.name}}</h3>
     <form method="post">
-    {% for available_time in available_times %}
-        <div class="available-time">
-            <input type="radio" name="time_id" id="selected_time" value="{{ available_time.id }}">
-            <label for="selected_time">{{ available_time.start_parsed.strftime("%c") }} - {{ available_time.end_parsed.strftime("%c") }}</label>
-        </div>
-    {% endfor %}
-
-    <label for="package">select your package:</label>
-    <select name="package_id" id="package">
-        {% for package in packages %}
-            <option value="{{package.id}}">{{package.items}} - ${{package.pricing}}</option>
+        <p> available dates and times: </p>
+        {% for available_time in available_times %}
+            <div class="available-time">
+                <input id = "availableID" type="radio" name="time_id" id="selected_time" value="{{ available_time.id }}">
+                <label class = "availableLabelID" for="selected_time">{{ available_time.start_parsed.strftime("%c") }} - {{ available_time.end_parsed.strftime("%c") }}</label>
+            </div>
+            <br>
         {% endfor %}
-    </select>
-    <div class ="subButtonPos" style="padding-top:20px">
-        <input class = "subButton" style="padding: 2px;" type="submit" value="book!">
-    </div>
+        {%if not available_times%}
+            <p><i>no times available</i></p> 
+        {%else%}
+            <label for="package">select your package:</label>
+            <select name="package_id" id="package">
+                {% for package in packages %}
+                    <option value="{{package.id}}">{{package.items}} - ${{package.pricing}}</option>
+                {% endfor %}
+            </select>
+            <div class ="subButtonPos" style="padding-top:20px">
+                <input class = "subButton" style="padding: 2px;" type="submit" value="book!">
+            </div>
+        {%endif%}
     </form>
 </div>
 {% endblock content %}

@@ -43,7 +43,7 @@ def init_db():
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo@email.com', 'password', 'photo1', '123', 'photographer');")
     cursor.execute("INSERT INTO album(name, type, release_type, photographer_email) VALUES ('alb1', 'photos', 'idk', 'photo@email.com');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'alb1');")
-    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com');")
+    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo@email.com');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
     cursor.close()
     db.commit()

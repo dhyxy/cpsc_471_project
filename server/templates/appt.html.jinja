@@ -5,18 +5,20 @@
 
 {% block content %}
 <div class="appointments-list">
-    <h3>appointments</h3>
+    <h3 style="font-size:30px;text-decoration:underline">Appointments Booked</h3>
     {% for appointment in appointments %}
         <div class="appointment-container">
             {% if is_photographer %}
-                <h4>{{ appointment['client_email'] }}</h4>
+                <h4>Clients Email: {{ appointment['client_email'] }}</h4>
             {% else %}
-                <h4><a href="{{ url_for('core.photographer', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
+                <h4>Photographer Name: {{photographer.name}}</h4>
+                <h4>Photographers Email: <a href="{{ url_for('core.photographer', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
             {% endif %}
-            <p>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</p>
-            <p>${{ appointment['pricing']}}</p>
-            <p>package content: {{ appointment['items'] }}</p>
-            <a href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">get invoice</a>
+            <p style="font-size:13px"><b>Date and time of appointment:<br>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</b></p>
+            <p>Total Cost: <b>${{ appointment['pricing']}}</b></p>
+            <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
+            <br>
+            <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
         </div>
     {% endfor %}
 </div>
