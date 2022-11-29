@@ -11,6 +11,7 @@
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
+<div class="wrapper">
     <div class="header">
             <img src="{{ url_for('static', filename='danilogo.png') }}" class="log" />
             <div class="header-right">
@@ -31,8 +32,9 @@
         {% block content %}{% endblock %}
     </div>
     <div class = "foot">
-        <footer>
+        <footer style="width:2000px">
             <p class="text-center">Copyright &copy; artisticallydanielles.com</p>
         </footer>
     </div>
+</div>
 </body>

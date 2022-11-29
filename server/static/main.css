@@ -61,6 +61,9 @@ body {
   position: absolute;
   margin-bottom: 0;
   width: 100%;
+  max-width: 1950px;
+  margin-left: auto;
+  margin-right: auto;
   height: 23px;
   padding-top: 5px;
   border-top: 1px solid black;
@@ -90,11 +93,21 @@ footer {
   font-weight: 200;
   line-height: 2;
 }
-
+.wrapper {
+  /*this is so even after resizing, everything stays in place*/
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1950px;
+}
 .mainPageImages {
-  display: block;
+  width: 60%;
+  height: 560px;
+  margin: 0 auto;
+  white-space: nowrap;
+  /*display: block;
   margin: auto;
   width: 70%;
+  */
 }
 .homeBoudoir {
   height: 400px;
