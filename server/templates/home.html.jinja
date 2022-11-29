@@ -30,4 +30,14 @@
 </div>
 <br>
 <br>
+{%if not is_photographer%} 
+    {% for photographer in photographers %}
+        <div style="display:block;text-align:center">
+            <a class = "apptText" href="{{ url_for('core.photographer', email=photographer['email']) }}">View Albums</a>
+        </div>
+    {%endfor%}
+{%endif%}
+
+<br>
+<br>
 {% endblock %}
