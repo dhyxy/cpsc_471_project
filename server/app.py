@@ -13,22 +13,12 @@ core = Blueprint('core', __name__)
 def home():
     photographers = db.User.list_photographers()
     is_photographer = False
+    appointments = [];
     if 'user' in g:
         user: db.User = g.get('user')
         is_photographer = user and user.type is db.UserType.PHOTOGRAPHER
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('home.html.jinja', photographers=photographers, is_photographer=is_photographer)
-
-@core.route('/appointment')
-def appointment():
-    photographers = db.User.list_photographers()
-    appointments = []
-    is_photographer = False
-    if 'user' in g:
-        user: db.User = g.get('user')
-        is_photographer = user and user.type is db.UserType.PHOTOGRAPHER
-        appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('appointment.html.jinja', photographers=photographers, is_photographer=is_photographer, appointments=appointments)
+    return render_template('home.html.jinja', photographers=photographers, is_photographer=is_photographer, appointments = appointments)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():

@@ -28,6 +28,12 @@
     <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample2.jpg')}}>
     <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample3.jpg')}}>
 </div>
+{%if not is_photographer%} 
+    {% for photographer in photographers %}
+        <a href="{{ url_for('core.photographer', email=photographer['email']) }}">View Albums</a>
+    {%endfor%}
+{%endif%}
+
 <br>
 <br>
 {% endblock %}
