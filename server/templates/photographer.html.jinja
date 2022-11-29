@@ -10,10 +10,10 @@
     <h3>albums</h3>
     {% for album in albums %}
         <div class="album-container">
-            {{ album.name }} {{ album.type }} {{ album.release_type }}
+            <strong>album name: </strong>{{ album.name }} <strong>album type: </strong>{{ album.type }}<strong>release type: </strong> {{ album.release_type }}
             <div class="photos-container">
                 {% for photo in album.photos %}
-                    {{ photo.id }} {{ photo.pathname }}
+                    <img src="{{ url_for('static', filename=photo.pathname) }}">
                 {% endfor %}
             </div>
         </div>
