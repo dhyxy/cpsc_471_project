@@ -36,17 +36,13 @@ def register():
         password = request.form['password']
         name = request.form['name']
         phone_number = request.form['phone_number']
-        user_type = None
-        try:
-            user_type = db.UserType.from_string(request.form['user_type'])
-        except ValueError as e:
-            err = str(e)
-
+        user_type =  db.UserType.CLIENT
+        
         if not (email and password and name and phone_number):
             err = "All fields must be entered"
         
-        if err or not user_type:
-            return render_register_template(error=err or "Invalid user type?")
+        if err:
+            return render_register_template(error=err)
 
         try:
             # TODO(1): for the project we aren't hashing the password for simplicity
@@ -61,7 +57,7 @@ def register():
     return render_register_template()
 
 def render_register_template(**context):
-    return render_template('register.html.jinja', USER_TYPES=db.USER_TYPE_VALUES, **context)
+    return render_template('register.html.jinja', **context)
 
 @core.route('/login', methods=('GET', 'POST',))
 def login():
@@ -92,8 +88,6 @@ def login():
 @core.route('/logout')
 def logout():
     session.clear()
-    global user_type
-
     return redirect(url_for('.home'))
 
 @core.route('/photographers')
