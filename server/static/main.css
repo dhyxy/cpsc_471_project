@@ -11,7 +11,6 @@ body {
 .header {
   overflow: hidden;
   background-color: rgba(250, 165, 225, 0.6);
-  padding: 4px 4px;
   border-bottom: 1px solid black;
   font-family: "Pacifico", cursive;
   font-size: 10px;
@@ -27,6 +26,25 @@ body {
   font-size: 16px;
   line-height: 25px;
   border-radius: 4px;
+  margin-top: 6px;
+}
+
+/* Style the header links */
+.header img {
+  float: left;
+}
+
+/* Style the header text */
+.header h1 {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 15px;
+  text-decoration: wavy;
+  font-size: 25px;
+  line-height: 25px;
+  border-radius: 4px;
+  margin-left: 15px;
   margin-top: 6px;
 }
 
@@ -69,12 +87,18 @@ body {
   text-align: center;
   background-color: rgba(250, 165, 225, 0.6);
 }
+
+.allButFooter {
+  min-height: calc(100vh - 40px);
+}
+
 .foot {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 footer {
+  min-height:50px;
   overflow: hidden;
 }
 

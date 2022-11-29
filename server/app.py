@@ -8,17 +8,24 @@ from flask import Blueprint, flash, g, redirect, render_template, request, sessi
 EMAIL_SESSION_KEY = 'user_email'
 
 core = Blueprint('core', __name__)
+user_type="none"
 
 @core.route('/')
 def home():
     photographers = db.User.list_photographers()
     is_photographer = False
     appointments = [];
+    global user_type
     if 'user' in g:
         user: db.User = g.get('user')
-        is_photographer = user and user.type is db.UserType.PHOTOGRAPHER
+        if user and user.type is db.UserType.PHOTOGRAPHER:
+            user_type="photographer"
+            is_photographer=True
+        if user and user.type is db.UserType.CLIENT:
+            user_type = "client"
+        print(user_type)
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('home.html.jinja', photographers=photographers, is_photographer=is_photographer, appointments = appointments)
+    return render_template('home.html.jinja', photographers=photographers, user_type=user_type, appointments = appointments)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -85,13 +92,17 @@ def login():
 @core.route('/logout')
 def logout():
     session.clear()
+    global user_type
+
     return redirect(url_for('.home'))
 
-@core.route('/photographers/<email>')
-def photographer(email: str):
+@core.route('/photographers')
+def photographer():
+    email="photo@email.com"
     photographer_ = db.User.read(email)
     albums = db.Album.read(email)
-    return render_template('photographer.html.jinja', photographer=photographer_, albums=albums)
+    print(user_type)
+    return render_template('photographer.html.jinja',user_type=user_type, photographer=photographer_, albums=albums)
 
 @login_required
 @core.route('/profile', methods=('GET', 'POST'))
@@ -110,11 +121,12 @@ def profile():
         db.PhotographerAvailableTime.create(start, end, user.email)
         return redirect(url_for('.profile')) # reload page after post
     
-    return render_template('profile.html.jinja', user=user, available_times=available_times)
+    return render_template('profile.html.jinja', user=user, user_type=user_type, available_times=available_times)
 
 @login_required
-@core.route('/book/<photographer_email>', methods=('GET', 'POST'))
-def book(photographer_email: str):
+@core.route('/book', methods=('GET', 'POST'))
+def book():
+    photographer_email="photo@email.com"
     user: db.User = g.user
     if not user or user.type is not db.UserType.CLIENT:
         flash("You must be a logged in client to book with this photographer")
@@ -131,7 +143,7 @@ def book(photographer_email: str):
     packages = db.Package.read_all(photographer.email)
     packages.sort(key=lambda package: package.pricing)
 
-    return render_template('book.html.jinja', photographer=photographer, available_times=available_times, packages=packages)
+    return render_template('book.html.jinja', user_type=user_type, photographer=photographer, available_times=available_times, packages=packages)
 
 @login_required
 @core.route('/invoice/<int:appointment_id>')
@@ -142,7 +154,7 @@ def invoice(appointment_id: int):
     photographer = db.User.read(appointment.photographer_email)
 
     invoice = db.Invoice.create(datetime.datetime.now(), package.pricing, package.items, appointment.id)
-    return render_template('invoice.html.jinja', invoice=invoice, time=time, photographer=photographer)
+    return render_template('invoice.html.jinja', user_type=user_type, invoice=invoice, time=time, photographer=photographer)
 
 # TODO: this should be a `DELETE` method, written as POST to save time for project
 @core.route("/available-time/delete/<int:id>", methods=('POST',))
