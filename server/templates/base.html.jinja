@@ -17,6 +17,7 @@
                 <a class="inactive {{'active' if active_page == 'home'}}" href="{{url_for('core.home')}}">Home</a>
                 {% if session.get(EMAIL_SESSION_KEY) %}
                     <a class="inactive {{'active' if active_page == 'logout'}}" href="{{ url_for('core.logout') }}">Logout</a>
+                    <a class = "inactive {{'active' if active_page == 'appt'}}" href="{{ url_for('core.appt') }}">Bookings</a>
                 {% if is_photographer %}
                     <a class="inactive {{'active' if active_page == 'profile'}}" href="{{ url_for('core.profile') }}">Profile</a>
                 {% endif %}

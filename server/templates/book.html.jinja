@@ -3,9 +3,9 @@
 {% block title %}booking{% endblock title %}
 
 {% block content %}
-booking with {{ photographer.name }}
-<div class="booking-container">
-    photographer's available times:
+<div align:"center" class="main-block">
+    <h3 id = "contactHead" style = "text-decoration:none">{{photographer.name}}</h3>
+    <h1 id = "contactHead">Package Selection</h1>
     <form method="post">
     {% for available_time in available_times %}
         <div class="available-time">
@@ -20,7 +20,9 @@ booking with {{ photographer.name }}
             <option value="{{package.id}}">{{package.items}} - ${{package.pricing}}</option>
         {% endfor %}
     </select>
-    <input type="submit" value="book!">
+    <div class ="subButtonPos" style="padding-top:20px">
+        <input class = "subButton" style="padding: 2px;" type="submit" value="book!">
+    </div>
     </form>
 </div>
 {% endblock content %}
