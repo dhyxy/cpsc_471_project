@@ -45,7 +45,7 @@ def init_db():
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo3@email.com', 'password', 'Jane', '234', 'photographer');")
     cursor.execute("INSERT INTO album(name, type, release_type, photographer_email) VALUES ('alb1', 'photos', 'idk', 'photo@email.com');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'alb1');")
-    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com');")
+    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo@email.com');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
     cursor.close()
     db.commit()
@@ -298,3 +298,29 @@ class Photo:
         data = db.execute(Photo.READ, (album_name,)).fetchall()
         photos = [Photo(**row) for row in data]
         return photos
+
+@dataclass
+class ContactForm:
+    id: int
+    message: str
+    client_email: str
+    photographer_email: str
+
+    CREATE = "INSERT INTO form (message, client_email, photographer_email) VALUES (?, ?, ?)"
+    READ = "SELECT * FROM form WHERE photographer_email = ?"
+
+    @staticmethod
+    @tries_to_commit
+    def create(message: str, client_email: str, photographer_email: str) -> ContactForm:
+        db = get_db()
+        c = db.execute(ContactForm.CREATE, (message, client_email, photographer_email))
+        db.commit()
+        assert c.lastrowid is not None # TODO unstable
+        return ContactForm(c.lastrowid, message, client_email, photographer_email)
+
+    @staticmethod
+    def read(photographer_email: str) -> list[ContactForm]:
+        db = get_db()
+        data = db.execute(ContactForm.READ, (photographer_email,))
+        forms = [ContactForm(**row) for row in data]
+        return forms

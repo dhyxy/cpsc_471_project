@@ -28,4 +28,13 @@ add new available time
     <input type="submit" value="add new available timing">
 </form>
 </div>
+
+<div class="contact-forms">
+    {% for contact_form in contact_forms %}
+    <div class="contact-form">
+        <p>from: {{ contact_form.client_email }}</p>
+        <p>message: {{ contact_form.message }}</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock content %}
