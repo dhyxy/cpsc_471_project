@@ -118,19 +118,25 @@ def profile():
     if user.type is not db.UserType.PHOTOGRAPHER:
         flash("You don't have sufficient permissions to access this page")
         return redirect(url_for('.home'))
-
-    available_times = db.PhotographerAvailableTime.read_all(user.email)
-
+    
     if request.method == 'POST':
         start = request.form['start']
         end = request.form['end']
         db.PhotographerAvailableTime.create(start, end, user.email)
         return redirect(url_for('.profile')) # reload page after post
     
-    return render_template('profile.html.jinja', user=user, user_type=user_type, available_times=available_times)
-
+    available_times = db.PhotographerAvailableTime.read_all(user.email)
+    contact_forms = db.ContactForm.read(user.email)
+    return render_template(
+        'profile.html.jinja', 
+        user=user, 
+        available_times=available_times, 
+        contact_forms=contact_forms
+    )
+    
 @login_required
 @core.route('/book/<photographer_email>', methods=('GET', 'POST'))
+
 def book(photographer_email: str):
     user: db.User = g.user
     if not user or user.type is not db.UserType.CLIENT:
@@ -149,6 +155,22 @@ def book(photographer_email: str):
     packages.sort(key=lambda package: package.pricing)
 
     return render_template('book.html.jinja', user_type=user_type, photographer=photographer, available_times=available_times, packages=packages)
+
+@login_required
+@core.route('/contact/<photographer_email>', methods=('GET', 'POST',))
+def contact(photographer_email: str):
+    user: db.User = g.user
+    if not user or user.type is not db.UserType.CLIENT:
+        flash("You must be a logged in client to contact this photographer")
+        return redirect(url_for('.home'))
+
+    if request.method == 'POST':
+        message = request.form['message']
+        db.ContactForm.create(message, user.email, photographer_email)
+        return redirect(url_for('core.photographers', email=photographer_email))
+
+    photographer = db.User.read(photographer_email)
+    return render_template('contact.html.jinja', photographer=photographer)
 
 @login_required
 @core.route('/invoice/<int:appointment_id>')

@@ -16,6 +16,9 @@
     {% if next=="book" %}
         <h1>Book an appointment!</h1>
     {% endif %}
+    {%if next =="contact"%}
+        <h1>contact us!</h1>
+    {% endif %}
     <h2>Select Photographer:</h2>
     {% for photographer in photographers %}
         <div class="list_photographer">
@@ -24,6 +27,9 @@
             {% endif %}
             {% if next=="book" %}
                 <a href="{{url_for('core.book', photographer_email=photographer['email'])}}">{{photographer['name']}}</a>
+            {% endif %}
+            {% if next=="contact" %}
+                 <a href="{{ url_for('core.contact', photographer_email=photographer['email']) }}">done</a>
             {% endif %}
         </div>
     {% endfor %}
