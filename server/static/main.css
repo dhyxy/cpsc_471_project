@@ -120,13 +120,13 @@ footer {
 }
 
 .mainPageImages {
-  display: block;
-  margin: auto;
-  width: 70%;
+  display: flex;
+  justify-content: center;
 }
 .homeImg {
   height: 400px;
-  width: 270px;
+  width: auto;
+  vertical-align: middle;
   padding: 6px;
 }
 
