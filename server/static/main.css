@@ -101,11 +101,7 @@ body {
   justify-content: flex-start;
 }
 footer {
-<<<<<<< HEAD
   min-height: 50px;
-=======
-  min-height:50px;
->>>>>>> shanna
   overflow: hidden;
 }
 
@@ -162,17 +158,10 @@ footer {
   align-items: center;
   min-height: 100vh;
 }
-<<<<<<< HEAD
 .content {
   margin: 10px;
 }
 .list_photographer a {
-=======
-.content{
-  margin: 10px;
-}
-.list_photographer a{
->>>>>>> shanna
   border: 1px solid black;
   display: block;
   padding: 15px;
@@ -190,11 +179,7 @@ footer {
 .gallery-container {
   margin: 10px;
 }
-<<<<<<< HEAD
 .gallery-container a {
-=======
-.gallery-container a{
->>>>>>> shanna
   font-size: 20px;
   color: blue;
   padding-right: 10px;
@@ -256,7 +241,6 @@ input::placeholder {
 }
 
 .appointments-list {
-  font-family: "Pacifico", cursive;
   display: flex;
   flex-direction: column;
   justify-content: center;
