@@ -167,7 +167,7 @@ def contact(photographer_email: str):
     if request.method == 'POST':
         message = request.form['message']
         db.ContactForm.create(message, user.email, photographer_email)
-        return redirect(url_for('core.photographers', email=photographer_email))
+        return redirect(url_for('core.gallery', email=photographer_email))
 
     photographer = db.User.read(photographer_email)
     return render_template('contact.html.jinja', photographer=photographer)
