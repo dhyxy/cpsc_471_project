@@ -111,6 +111,7 @@ def gallery(email: str):
 @login_required
 @core.route('/profile', methods=('GET', 'POST'))
 def profile():
+    global user_type
     user: db.User = g.user
     # for rn, /profile is only for photographers
     if user.type is not db.UserType.PHOTOGRAPHER:
@@ -128,6 +129,7 @@ def profile():
     return render_template(
         'profile.html.jinja', 
         user=user, 
+        user_type=user_type,
         available_times=available_times, 
         contact_forms=contact_forms
     )
@@ -168,7 +170,7 @@ def contact(photographer_email: str):
         return redirect(url_for('core.gallery', email=photographer_email))
 
     photographer = db.User.read(photographer_email)
-    return render_template('contact.html.jinja', photographer=photographer)
+    return render_template('contact.html.jinja', user_type=user_type, photographer=photographer)
 
 @login_required
 @core.route('/invoice/<int:appointment_id>')
