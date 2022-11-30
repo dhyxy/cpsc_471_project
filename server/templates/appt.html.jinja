@@ -11,7 +11,6 @@
             {% if is_photographer %}
                 <h4>Clients Email: {{ appointment['client_email'] }}</h4>
             {% else %}
-                <h4>Photographer Name: {{photographer.name}}</h4>
                 <h4>Photographers Email: <a href="{{ url_for('core.photographer', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
             {% endif %}
             <p style="font-size:13px"><b>Date and time of appointment:<br>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</b></p>

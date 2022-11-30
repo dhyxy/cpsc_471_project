@@ -31,7 +31,7 @@ def appt():
         user: db.User = g.get('user')
         is_photographer = user and user.type is db.UserType.PHOTOGRAPHER
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('appt.html.jinja', user_type=user_type, appointments = appointments)
+    return render_template('appt.html.jinja', user_type=user_type, appointments = appointments, photographers=photographers)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
