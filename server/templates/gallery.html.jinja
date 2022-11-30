@@ -16,7 +16,7 @@
         {% endif %}
         {% if user_type != "photographer" %}
             {# TODO #}
-            <a href="#">contact</a> 
+            <a href="{{ url_for('core.contact', photographer_email=photographer.email) }}">contact</a> 
             <a href="{{ url_for('core.book', photographer_email=photographer.email) }}">book a session!</a>
         {% endif %}
         </section>
