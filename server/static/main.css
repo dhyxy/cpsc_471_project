@@ -149,6 +149,19 @@ footer {
   align-items: center;
   min-height: 100vh;
 }
+.select_photographer a{
+  border: 1px solid black;
+  display: block;
+  padding: 25px;
+  margin: 25px;
+  box-shadow: 0 2px 5px #f5f5f5;
+  background: #ecc7c7;
+  border-radius: 15px;
+  font-size: 20x;
+  font-family: "Pacifico", cursive;
+  text-align: center;
+  width: 50%;
+}
 form {
   border: 1px solid black;
   display: block;

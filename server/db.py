@@ -40,7 +40,9 @@ def init_db():
             click.echo(e)
     
     cursor = db.cursor()
-    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo@email.com', 'password', 'photo1', '123', 'photographer');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo@email.com', 'password', 'Anna', '123', 'photographer');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo2@email.com', 'password', 'Kyle', '234', 'photographer');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo3@email.com', 'password', 'Jane', '234', 'photographer');")
     cursor.execute("INSERT INTO album(name, type, release_type, photographer_email) VALUES ('alb1', 'photos', 'idk', 'photo@email.com');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'alb1');")
     cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com');")
@@ -104,11 +106,12 @@ class User:
             raise ValueError(f"no user exists with email: {email}")
         user = User(**data)
         return user
-    
+
     @staticmethod
     def list_photographers() -> list[User]:
         db = get_db()
         data = db.execute(User.LIST_PHOTOGRAPHERS).fetchall()
+        print("data: " + str(data))
         photographers = [User(**row) for row in data]
         return photographers
 

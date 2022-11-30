@@ -1,0 +1,31 @@
+{% extends 'base.html.jinja' %}
+
+{% block title %} register {% endblock %}
+
+{% block content %}
+
+{% if error %}
+<div class="error">
+{{ error }}
+</div>
+{% endif %}
+<div "padding:20px">
+    {% if next=="gallery" %}
+        <h1>View our work!</h1>
+    {% endif %}
+    {% if next=="book" %}
+        <h1>Book an appointment!</h1>
+    {% endif %}
+    <h2>Select Photographer:</h2>
+    {% for photographer in photographers %}
+        <div class="select_photographer">
+            {% if next=="gallery" %}
+                <a href="{{url_for('core.gallery', email=photographer['email'])}}">{{photographer['name']}}</a>
+            {% endif %}
+            {% if next=="book" %}
+                <a href="{{url_for('core.book', photographer_email=photographer['email'])}}">{{photographer['name']}}</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

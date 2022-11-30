@@ -12,10 +12,9 @@ user_type="none"
 
 @core.route('/')
 def home():
-    photographers = db.User.list_photographers()
+    global user_type
     is_photographer = False
     appointments = [];
-    global user_type
     if 'user' in g:
         user: db.User = g.get('user')
         if user and user.type is db.UserType.PHOTOGRAPHER:
@@ -25,7 +24,7 @@ def home():
             user_type = "client"
         print(user_type)
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('home.html.jinja', photographers=photographers, user_type=user_type, appointments = appointments)
+    return render_template('home.html.jinja', user_type=user_type, appointments = appointments)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -90,9 +89,13 @@ def logout():
     session.clear()
     return redirect(url_for('.home'))
 
-@core.route('/gallery')
-def gallery():
-    email="photo@email.com"
+@core.route('/photographers/<next>')
+def photographers(next: str):
+    photographers = db.User.list_photographers()
+    return render_template('photographers.html.jinja', user_type=user_type, photographers=photographers, next=next)
+
+@core.route('/gallery/<email>')
+def gallery(email: str):
     photographer_ = db.User.read(email)
     albums = db.Album.read(email)
     print(user_type)
@@ -118,9 +121,8 @@ def profile():
     return render_template('profile.html.jinja', user=user, user_type=user_type, available_times=available_times)
 
 @login_required
-@core.route('/book', methods=('GET', 'POST'))
-def book():
-    photographer_email="photo@email.com"
+@core.route('/book/<photographer_email>', methods=('GET', 'POST'))
+def book(photographer_email: str):
     user: db.User = g.user
     if not user or user.type is not db.UserType.CLIENT:
         flash("You must be a logged in client to book with this photographer")
