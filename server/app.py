@@ -39,7 +39,7 @@ def appt():
             user_type = "client"
         print(user_type)
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('home.html.jinja', user_type=user_type, appointments = appointments)
+    return render_template('appt.html.jinja', user_type=user_type, appointments = appointments)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -159,7 +159,7 @@ def book(photographer_email: str):
         time_id = int(request.form['time_id'])
         package_id = int(request.form['package_id'])
         db.Appointment.create(time_id, package_id, photographer_email, user.email)
-        return redirect(url_for('.photographer', email=photographer_email))
+        return redirect(url_for('core.photographers', email=photographer_email))
     
     photographer = db.User.read(photographer_email)
     available_times = db.PhotographerAvailableTime.read_all(photographer_email, False)
