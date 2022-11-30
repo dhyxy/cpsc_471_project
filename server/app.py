@@ -8,15 +8,17 @@ from flask import Blueprint, flash, g, redirect, render_template, request, sessi
 EMAIL_SESSION_KEY = 'user_email'
 
 core = Blueprint('core', __name__)
+curr_user="none"
 user_type="none"
 
 @core.route('/')
 def home():
-    global user_type
+    global user_type, curr_user
     is_photographer = False
     appointments = [];
     if 'user' in g:
         user: db.User = g.get('user')
+        curr_user = user
         if user and user.type is db.UserType.PHOTOGRAPHER:
             user_type="photographer"
             is_photographer=True
@@ -28,6 +30,7 @@ def home():
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
+    global user_type
     if request.method == 'POST':
         err = None
 
@@ -60,6 +63,7 @@ def render_register_template(**context):
 
 @core.route('/login', methods=('GET', 'POST',))
 def login():
+    global user_type
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -91,19 +95,21 @@ def logout():
 
 @core.route('/photographers/<next>')
 def photographers(next: str):
+    global user_type
     photographers = db.User.list_photographers()
     return render_template('photographers.html.jinja', user_type=user_type, photographers=photographers, next=next)
 
 @core.route('/gallery/<email>')
 def gallery(email: str):
-    photographer_ = db.User.read(email)
+    global curr_user, user_type
+    photographer = db.User.read(email)
     albums = db.Album.read(email)
-    print(user_type)
-    return render_template('gallery.html.jinja',user_type=user_type, photographer=photographer_, albums=albums)
+    return render_template('gallery.html.jinja',user_type=user_type, curr_user=curr_user, photographer=photographer, albums=albums)
 
 @login_required
 @core.route('/profile', methods=('GET', 'POST'))
 def profile():
+    global user_type
     user: db.User = g.user
     # for rn, /profile is only for photographers
     if user.type is not db.UserType.PHOTOGRAPHER:
@@ -123,6 +129,7 @@ def profile():
 @login_required
 @core.route('/book/<photographer_email>', methods=('GET', 'POST'))
 def book(photographer_email: str):
+    global user_type
     user: db.User = g.user
     if not user or user.type is not db.UserType.CLIENT:
         flash("You must be a logged in client to book with this photographer")
@@ -144,6 +151,7 @@ def book(photographer_email: str):
 @login_required
 @core.route('/invoice/<int:appointment_id>')
 def invoice(appointment_id: int):
+    global user_type
     appointment = db.Appointment.read(appointment_id)
     time = db.PhotographerAvailableTime.read(appointment.time_id)
     package = db.Package.read(appointment.package_id)
