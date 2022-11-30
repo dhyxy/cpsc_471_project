@@ -10,14 +10,19 @@
 
     {% if session.get(EMAIL_SESSION_KEY) %}
         <section class="booking">
+        {% if photographer.email == curr_user.email %} 
             {# TODO #}
-            <a href="{{ url_for('core.contact', photographer_email=photographer.email) }}">contact</a>
+            <a href="{{ url_for('core.gallery', email=photographer.email) }}">Upload Albums!</a>
+        {% endif %}
+        {% if user_type != "photographer" %}
+            {# TODO #}
+            <a href="#">contact</a> 
             <a href="{{ url_for('core.book', photographer_email=photographer.email) }}">book a session!</a>
+        {% endif %}
         </section>
     {% else %}
         <a href="{{ url_for('core.register') }}">Register or sign in to book with this photographer!</a>
     {% endif %}
-
 
     <section class="albums">
     {% for album in albums %}
