@@ -13,7 +13,7 @@
 <body>
     <div class="allButFooter">
         <div class="header">
-                <img src="{{ url_for('static', filename='danilogo.png') }}" class="log" />
+                <img src="{{ url_for('static', filename='logo.png') }}" class="log" />
                 <div class="header-right">
                     <a class="inactive {{'active' if active_page == 'home'}}" href="{{url_for('core.home')}}">Home</a>
                     <a class="inactive {{'active' if active_page == 'photographers'}}" href="{{ url_for('core.photographers', next="gallery") }}">Gallery</a>

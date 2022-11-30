@@ -5,23 +5,8 @@
 
 {% block content %}
 
-
-    {{ photographer.name }}
-    {{ photographer.email }}
-
-    <section class="albums">
-    <h3>albums</h3>
-    {% for album in albums %}
-        <div class="album-container">
-            {{ album.name }} {{ album.type }} {{ album.release_type }}
-            <div class="photos-container">
-                {% for photo in album.photos %}
-                    {{ photo.id }} {{ photo.pathname }}
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
-    </section>
+<div class="gallery-container">
+    <h1 style="font-size: 40px">{{ photographer.name }}'s Gallery</h1>
 
     {% if session.get(EMAIL_SESSION_KEY) %}
         <section class="booking">
@@ -32,6 +17,22 @@
     {% else %}
         <p>register to book with this photographer!</p>
     {% endif %}
+
+
+    <section class="albums">
+    {% for album in albums %}
+        <div class="album-container">
+            <h2 style="font-size: 30px; margin-bottom: 5px"> {{ album.name }} </h2>
+            {{ album.type }} {{ album.release_type }}
+            <div class="photos-container">
+            {% for photo in album.photos %}
+                    {{ photo.id }} {{ photo.pathname }}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </section>
+</div>
 {% endblock %}
 
 
