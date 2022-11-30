@@ -1,0 +1,48 @@
+{% extends "base.html.jinja" %}
+
+
+{% block title %}Gallery{% endblock %}
+
+{% block content %}
+
+<div class="gallery-container">
+    <h1 style="font-size: 40px">{{ photographer.name }}'s Gallery</h1>
+
+    {% if session.get(EMAIL_SESSION_KEY) %}
+        <section class="booking">
+            {# TODO #}
+            <a href="#">contact</a>
+            <a href="{{ url_for('core.book', photographer_email=photographer.email) }}">book a session!</a>
+        </section>
+    {% else %}
+        <a href="{{ url_for('core.register') }}">Register or sign in to book with this photographer!</a>
+    {% endif %}
+
+
+    <section class="albums">
+    {% for album in albums %}
+        <div class="album-container">
+            <h2 style="font-size: 30px; margin-bottom: 15px"> {{ album.name }} </h2>
+            <div class="photos-container">
+
+                <img src={{url_for('static', filename='flower1.jpg')}}>
+                <img src={{url_for('static', filename='flower2.jpg')}}>
+                <img src={{url_for('static', filename='flower3.jpg')}}>
+                <img src={{url_for('static', filename='flower1.jpg')}}>
+                <img src={{url_for('static', filename='flower2.jpg')}}>
+                <img src={{url_for('static', filename='flower3.jpg')}}>
+                <img src={{url_for('static', filename='flower1.jpg')}}>
+                <img src={{url_for('static', filename='flower2.jpg')}}>
+                <img src={{url_for('static', filename='flower3.jpg')}}>
+
+                {% for photo in album.photos %}
+                    {# <img src={{url_for('static', filename=photo.pathname)}}> #}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </section>
+</div>
+{% endblock %}
+
+

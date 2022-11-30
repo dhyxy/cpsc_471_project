@@ -16,16 +16,19 @@
     <div class="main-block">
         <form method="post">
             <h3 id="contactHead">Login</h3>
-            <label  style="float:left; padding-left:20px" for="email">Email:</label>
-            <input style="width:80%" type="email" name="email" id="email" required>
-            <label style="float:left; padding-left:20px" for="password">Password:</label>
-            <input style="width:76%" type="password" name="password" id="password" required>
+            <label style="float:left; padding-left:20px" for="email">Email: &nbsp;</label>
+            <input style="width:86%" type="email" name="email" id="email" required><span>&nbsp;&nbsp;</span>
+            <br>
+            <br>
+            <label style="float:left; padding-left:20px" for="phone_number">Password: &nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <input style="width:71%; float: left" size="20" maxlength="20" type="text" name="password" id="password" required>
             <br>
             <br>
             <div class="subButtonPos">
                 <input class = "subButton" type="submit" value="login">
             </div>
         </form>
+        <a  href="{{ url_for('core.register') }}">Need an account? Sign up here!</a>
     </div>
 </div>
 {% endblock %}

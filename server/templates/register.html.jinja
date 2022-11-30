@@ -28,34 +28,12 @@
             <label style="float:left; padding-left:20px" for="phone_number">Phone Number: &nbsp;&nbsp;&nbsp;&nbsp;</label>
             <input style="width:71%; float: left" size="20" maxlength="20" type="text" name="phone_number" id="phone_number" required>
             <br>
-            <!--
-            <br>
-            <br>
-            <label style="float:left; padding-left:20px"for="user_type">Select User Type:</label>
-            <div style="display:flex; width:35%;">
-                
-                    {% for user_type_option in USER_TYPES %}
-                        {% if user_type_option == "photographer"%}
-                         <span style="padding-left:50%"></span>
-                            <input style="display:inline-block;" type="radio" name="user_type" id="{{ user_type_option }}" value="{{ user_type_option }}">
-                                {{user_type_option}}
-                            </input>
-                        {%else%}
-                        <span style="padding-left:55%"></span>
-                            <input style="display:block;" type="radio" name="user_type" id="{{ user_type_option }}" value="{{ user_type_option }}">
-                                 {{user_type_option}}
-                            </input>
-                        {% endif %}
-                        <br>
-                    {% endfor %}
-            </div>
-            -->
-            <br>
             <br>
             <div class="subButtonPos">
                 <input class = "subButton" type="submit" value="register"></input>
             </div>
         </form>
+        <a href="{{ url_for('core.login') }}">Already have an account? Login here!</a>
     </div>
 </div>    
 {% endblock %}

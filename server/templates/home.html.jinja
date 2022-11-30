@@ -5,39 +5,25 @@
 
 {% block content %}
 <div class = "home-container">
-    <h2 style="letter-spacing:1px; text-decoration:underline">Photography For The Bold</h2>
+    <h2 style="letter-spacing:1px; text-decoration:underline">Photography For The Adventurous</h2>
     <p>_________</p>
     <div>
-        <p style="line-height: 2.5">Artistically Danielle is a photography company that specializes in 
-            capturing individuals at their most vulnerable and beautiful. Each
-            image taken is beautifully brushed up and sweet, and showcases the beauty of
-            boudoir.
+        <p style="line-height: 2.5">
+        Photography 471 is at your service for all your phototaking needs, specializing
+        in the great outdoors. Book us to photograph and memorialize your carefully planned gardens,
+        or capture your most cherished memories such as weddings and birthdays.
         </p>
         <br>
-        <p style="font-size:15px"><i>“The key to feeling absolutely alive in your own skin lies in your 
-            ability to transform or channel your hardships and dark shadows into sensual energy.”</i></p>
+        <p style="font-size:15px"><i>“When words become unclear, I shall focus with photographs.
+         When images become inadequate, I shall be content with silence.”</i></p>
 
-        <p style="font-size:12px"><i>Lebo Grand</i></p>
+        <p style="font-size:12px"><i>Ansel Adams</i></p>
     </div>
 </div>
 <br>
-<br>
-<br>
 <div class = "mainPageImages">
-    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample1.jpg')}}>
-    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample2.jpg')}}>
-    <img class="homeBoudoir" src={{url_for('static', filename='boudoirExample3.jpg')}}>
+    <img class="homeImg" src={{url_for('static', filename='flower1.jpg')}}>
+    <img class="homeImg" src={{url_for('static', filename='flower2.jpg')}}>
+    <img class="homeImg" src={{url_for('static', filename='flower3.jpg')}}>
 </div>
-<br>
-<br>
-{%if not is_photographer%} 
-    {% for photographer in photographers %}
-        <div style="display:block;text-align:center">
-            <a class = "apptText" href="{{ url_for('core.photographer', email=photographer['email']) }}">View Albums</a>
-        </div>
-    {%endfor%}
-{%endif%}
-
-<br>
-<br>
 {% endblock %}

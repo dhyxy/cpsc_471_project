@@ -11,29 +11,33 @@
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
-<div class="wrapper">
-    <div class="header">
-            <img src="{{ url_for('static', filename='danilogo.png') }}" class="log" />
-            <div class="header-right">
-                <a class="inactive {{'active' if active_page == 'home'}}" href="{{url_for('core.home')}}">Home</a>
-                {% if session.get(EMAIL_SESSION_KEY) %}
-                    <a class="inactive {{'active' if active_page == 'logout'}}" href="{{ url_for('core.logout') }}">Logout</a>
-                    <a class = "inactive {{'active' if active_page == 'appt'}}" href="{{ url_for('core.appt') }}">Bookings</a>
-                {% if is_photographer %}
-                    <a class="inactive {{'active' if active_page == 'profile'}}" href="{{ url_for('core.profile') }}">Profile</a>
-                {% endif %}
-                {% else %}
-                    <a class="inactive {{'active' if active_page == 'register'}}" href="{{ url_for('core.register') }}">Register</a>
-                    <a class="inactive {{'active' if active_page == 'login'}}" href="{{ url_for('core.login') }}">Login</a>
-                {% endif %}
+    <div class="allButFooter">
+        <div class="header">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="log" />
+                <div class="header-right">
+                    <a class="inactive {{'active' if active_page == 'home'}}" href="{{url_for('core.home')}}">Home</a>
+                    <a class="inactive {{'active' if active_page == 'photographers'}}" href="{{ url_for('core.photographers', next="gallery") }}">Gallery</a>
+                    {% if session.get(EMAIL_SESSION_KEY) %}
+                    {% if user_type=="photographer" %}
+                        <a class="inactive {{'active' if active_page == 'profile'}}" href="{{ url_for('core.profile') }}">Profile</a>
+                    {% endif %}
+                    {% if user_type=="client" %}
+                        <a class="inactive {{'active' if active_page == 'photographers'}}" href="{{ url_for('core.photographers', next="book") }}">Book</a>
+                    {% endif %}
+                        <a class="inactive {{'active' if active_page == 'logout'}}" href="{{ url_for('core.logout') }}">Logout</a>
+                    {% else %}
+                        <a class="inactive {{'active' if active_page == 'register'}}" href="{{ url_for('core.register') }}">Register</a>
+                        <a class="inactive {{'active' if active_page == 'login'}}" href="{{ url_for('core.login') }}">Login</a>
+                    {% endif %}
+                </div>
             </div>
+        <div class="content">
+            {% block content %}{% endblock %}
         </div>
-    <div class="content">
-        {% block content %}{% endblock %}
     </div>
     <div class = "foot">
-        <footer style="width:2000px">
-            <p class="text-center">Copyright &copy; artisticallydanielles.com</p>
+        <footer>
+            <p class="text-center">Copyright &copy; photography471.com</p>
         </footer>
     </div>
 </div>
