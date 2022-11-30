@@ -15,7 +15,7 @@
             <a href="{{ url_for('core.book', photographer_email=photographer.email) }}">book a session!</a>
         </section>
     {% else %}
-        <p>Register to book with this photographer!</p>
+        <a href="{{ url_for('core.register') }}">Register or sign in to book with this photographer!</a>
     {% endif %}
 
 
