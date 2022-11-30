@@ -177,6 +177,11 @@ footer {
   color: blue;
   padding-right: 10px;
 }
+.photos-container img {
+  max-height: 300px;
+  max-width: 300px;
+  padding-right: 6px;
+}
 form {
   border: 1px solid black;
   display: block;

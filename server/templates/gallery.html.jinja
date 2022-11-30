@@ -22,11 +22,21 @@
     <section class="albums">
     {% for album in albums %}
         <div class="album-container">
-            <h2 style="font-size: 30px; margin-bottom: 5px"> {{ album.name }} </h2>
-            {{ album.type }} {{ album.release_type }}
+            <h2 style="font-size: 30px; margin-bottom: 15px"> {{ album.name }} </h2>
             <div class="photos-container">
-            {% for photo in album.photos %}
-                    {{ photo.id }} {{ photo.pathname }}
+
+                <img src={{url_for('static', filename='flower1.jpg')}}>
+                <img src={{url_for('static', filename='flower2.jpg')}}>
+                <img src={{url_for('static', filename='flower3.jpg')}}>
+                <img src={{url_for('static', filename='flower1.jpg')}}>
+                <img src={{url_for('static', filename='flower2.jpg')}}>
+                <img src={{url_for('static', filename='flower3.jpg')}}>
+                <img src={{url_for('static', filename='flower1.jpg')}}>
+                <img src={{url_for('static', filename='flower2.jpg')}}>
+                <img src={{url_for('static', filename='flower3.jpg')}}>
+
+                {% for photo in album.photos %}
+                    {# <img src={{url_for('static', filename=photo.pathname)}}> #}
                 {% endfor %}
             </div>
         </div>
