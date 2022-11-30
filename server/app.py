@@ -13,11 +13,14 @@ user_type="none"
 @core.route('/')
 def home():
     global user_type
-    is_photographer = False
     if 'user' in g:
         user: db.User = g.get('user')
-        is_photographer = user and user.type is db.UserType.PHOTOGRAPHER
-    return render_template('home.html.jinja', photographers=photographers, is_photographer=is_photographer)
+        if user and user.type is db.UserType.PHOTOGRAPHER:
+            user_type="photographer"
+        if user and user.type is db.UserType.CLIENT:
+            user_type = "client"
+        print(user_type)
+    return render_template('home.html.jinja', user_type=user_type, photographers=photographers)
 
 @core.route('/appt')
 def appt():
@@ -26,12 +29,7 @@ def appt():
     appointments = [];
     if 'user' in g:
         user: db.User = g.get('user')
-        if user and user.type is db.UserType.PHOTOGRAPHER:
-            user_type="photographer"
-            is_photographer=True
-        if user and user.type is db.UserType.CLIENT:
-            user_type = "client"
-        print(user_type)
+        is_photographer = user and user.type is db.UserType.PHOTOGRAPHER
         appointments = fetch_appointments(user.email, is_photographer)
     return render_template('home.html.jinja', user_type=user_type, appointments = appointments)
 
