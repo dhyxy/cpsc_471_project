@@ -72,6 +72,7 @@ CREATE TABLE invoice (
 CREATE TABLE form (
     id INTEGER PRIMARY KEY NOT NULL,
     message TEXT NOT NULL,
+    client_name TEXT NOT NULL REFERENCES user (name) ON DELETE CASCADE,
     client_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE,
     photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
 );
