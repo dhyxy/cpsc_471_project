@@ -10,6 +10,7 @@ EMAIL_SESSION_KEY = 'user_email'
 core = Blueprint('core', __name__)
 curr_user="none"
 user_type="none"
+loggedIn = 0
 
 @core.route('/')
 def home():
@@ -77,6 +78,7 @@ def render_register_template(**context):
 @core.route('/login', methods=('GET', 'POST',))
 def login():
     global user_type
+    global loggedIn
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -94,6 +96,7 @@ def login():
         
         if user and not err:
             session.clear()
+            loggedIn = 1
             session[EMAIL_SESSION_KEY] = user.email
             return redirect(url_for('.home'))
         elif err:
@@ -103,7 +106,9 @@ def login():
 
 @core.route('/logout')
 def logout():
+    global loggedIn
     session.clear()
+    loggedIn = 0;
     return redirect(url_for('.home'))
 
 @core.route('/photographers/<next>')
@@ -172,21 +177,24 @@ def book(photographer_email: str):
 @login_required
 @core.route('/contact/<photographer_email>', methods=('GET', 'POST',))
 def contact(photographer_email: str):
-    #user: db.User = g.user
-    
-    #if not user or user.type is not db.UserType.CLIENT:
     #    flash("You must be a logged in client to contact this photographer")
     #    return redirect(url_for('.home'))
-
+    global loggedIn
     if request.method == 'POST':
-        emails = request.form['email']
-        name = request.form['name']
+        if loggedIn == 1:
+            user: db.User = g.user
+            name = user.name
+            emails = user.email
+        elif loggedIn == 0:
+            emails = request.form['email']
+            name = request.form['name']
+            
         message = request.form['message']
         db.ContactForm.create(message, emails, name, photographer_email)
         return redirect(url_for('core.gallery', email=photographer_email))
 
     photographer = db.User.read(photographer_email)
-    return render_template('contact.html.jinja', user_type=user_type, photographer=photographer)
+    return render_template('contact.html.jinja', user_type=user_type, photographer=photographer, loggedIn = loggedIn)
 
 
 @login_required
