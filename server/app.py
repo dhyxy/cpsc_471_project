@@ -238,7 +238,6 @@ def fetch_appointments(email: str, is_photographer: bool):
 
 def _parse_times(appointment: sqlite3.Row):
     parsed_appointment = dict(appointment)
-    print("start: " + str(appointment['start_time']))
-    parsed_appointment['start_time'] = datetime.datetime.fromisoformat(str(appointment['start_time']))
+    parsed_appointment['start_time'] = datetime.datetime.fromisoformat(appointment['start_time'])
     parsed_appointment['end_time'] = datetime.datetime.fromisoformat(appointment['end_time'])
     return parsed_appointment
