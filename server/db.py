@@ -302,21 +302,22 @@ class Photo:
 @dataclass
 class ContactForm:
     id: int
+    client_name: str
     message: str
     client_email: str
     photographer_email: str
 
-    CREATE = "INSERT INTO form (message, client_email, photographer_email) VALUES (?, ?, ?)"
+    CREATE = "INSERT INTO form (message, client_email, client_name, photographer_email) VALUES (?, ?, ?, ?)"
     READ = "SELECT * FROM form WHERE photographer_email = ?"
 
     @staticmethod
     @tries_to_commit
-    def create(message: str, client_email: str, photographer_email: str) -> ContactForm:
+    def create(message: str, client_email: str, client_name:str, photographer_email: str) -> ContactForm:
         db = get_db()
-        c = db.execute(ContactForm.CREATE, (message, client_email, photographer_email))
+        c = db.execute(ContactForm.CREATE, (message, client_email, client_name, photographer_email))
         db.commit()
         assert c.lastrowid is not None # TODO unstable
-        return ContactForm(c.lastrowid, message, client_email, photographer_email)
+        return ContactForm(c.lastrowid, message, client_email, client_name, photographer_email)
 
     @staticmethod
     def read(photographer_email: str) -> list[ContactForm]:

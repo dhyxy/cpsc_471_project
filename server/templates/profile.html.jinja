@@ -32,6 +32,7 @@ add new available time
 <div class="contact-forms">
     {% for contact_form in contact_forms %}
     <div class="contact-form">
+        <p>sender: {{contact_form.client_name}}</p>
         <p>from: {{ contact_form.client_email }}</p>
         <p>message: {{ contact_form.message }}</p>
     </div>

@@ -1,15 +1,27 @@
 {% extends "base.html.jinja" %}
 
-{% block title %}contact {{ photographer.name }}{% endblock %}
+{% block title %}Contact {{ photographer.name }}!{% endblock %}
 
 {% block content %}
 <section class="contact-photographer">
-    <h3>contact {{ photographer.name }}!</h3>
-    <div class="contact-form">
+    <br>
+    <br>
+    <h3 id="contactHead">contact {{ photographer.name }}!</h3>
+    <div class="main-block">
         <form method="post">
-            <label for="message">ask the photographer a question!</label>
-            <input type="text" name="message" id="message" required>
-            <input type="submit" value="contact">
+            <h1 id="contactHead">ask the photographer a question!</h1>
+            <br>
+            <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="name">Name:&nbsp;</label>
+            <input style="float:left" size="20" maxlength="20" type="text" name="name" id="name" required>
+            <br>
+            <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="email">Email: </label>
+            <input style="float:left" type="email" name="email" id="email" required>
+
+            <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="message">message:</label>
+            <input style="float:left" type="text" name="message" id="message" required>
+            <div class="subButtonPos">
+                <input class = "subButton" style = "width:15%; padding:6px"type="submit" value="contact">
+            </div>
         </form>
     </div>
 </section>

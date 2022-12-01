@@ -172,13 +172,16 @@ def book(photographer_email: str):
 @core.route('/contact/<photographer_email>', methods=('GET', 'POST',))
 def contact(photographer_email: str):
     user: db.User = g.user
-    if not user or user.type is not db.UserType.CLIENT:
-        flash("You must be a logged in client to contact this photographer")
-        return redirect(url_for('.home'))
+    #if not user or user.type is not db.UserType.CLIENT:
+    #    flash("You must be a logged in client to contact this photographer")
+    #    return redirect(url_for('.home'))
 
     if request.method == 'POST':
+        emails = request.form['email']
+        name = request.form['name']
         message = request.form['message']
-        db.ContactForm.create(message, user.email, photographer_email)
+        user.type =  db.UserType.CLIENT
+        db.ContactForm.create(message, emails, name, photographer_email)
         return redirect(url_for('core.gallery', email=photographer_email))
 
     photographer = db.User.read(photographer_email)
