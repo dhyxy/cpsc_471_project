@@ -168,10 +168,12 @@ def book(photographer_email: str):
 
     return render_template('book.html.jinja', user_type=user_type, photographer=photographer, available_times=available_times, packages=packages)
 
+
 @login_required
 @core.route('/contact/<photographer_email>', methods=('GET', 'POST',))
 def contact(photographer_email: str):
-    user: db.User = g.user
+    #user: db.User = g.user
+    
     #if not user or user.type is not db.UserType.CLIENT:
     #    flash("You must be a logged in client to contact this photographer")
     #    return redirect(url_for('.home'))
@@ -180,12 +182,12 @@ def contact(photographer_email: str):
         emails = request.form['email']
         name = request.form['name']
         message = request.form['message']
-        user.type =  db.UserType.CLIENT
         db.ContactForm.create(message, emails, name, photographer_email)
         return redirect(url_for('core.gallery', email=photographer_email))
 
     photographer = db.User.read(photographer_email)
     return render_template('contact.html.jinja', user_type=user_type, photographer=photographer)
+
 
 @login_required
 @core.route('/invoice/<int:appointment_id>')
