@@ -16,14 +16,14 @@
                 <img src="{{ url_for('static', filename='logo.png') }}" class="log" />
                 <div class="header-right">
                     <a class="inactive {{'active' if active_page == 'home'}}" href="{{url_for('core.home')}}">Home</a>
-                    <a class="inactive {{'active' if active_page == 'photographers'}}" href="{{ url_for('core.photographers', next="gallery") }}">Gallery</a>
+                    <a class="inactive {{'active' if active_page == 'gallery'}}" href="{{ url_for('core.photographers', next="gallery") }}">Gallery</a>
                     {% if session.get(EMAIL_SESSION_KEY) %}
                         <a class="inactive {{'active' if active_page == 'appt'}}" href ="{{url_for('core.appt') }}">Appointments</a>
                     {% if user_type=="photographer" %}
                         <a class="inactive {{'active' if active_page == 'profile'}}" href="{{ url_for('core.profile') }}">Profile</a>
                     {% endif %}
                     {% if user_type=="client" %}
-                        <a class="inactive {{'active' if active_page == 'photographers'}}" href="{{ url_for('core.photographers', next="book") }}">Book</a>
+                        <a class="inactive {{'active' if active_page == 'booking'}}" href="{{ url_for('core.photographers', next="book") }}">Book</a>
                     {% endif %}
                         <a class="inactive {{'active' if active_page == 'logout'}}" href="{{ url_for('core.logout') }}">Logout</a>
                     {% else %}
