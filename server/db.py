@@ -194,12 +194,13 @@ class Package:
 @dataclass
 class Appointment:
     id: int
+    confirmed: bool
     time_id: int
     package_id: int
     photographer_email: str
     client_email: str
 
-    CREATE = "INSERT INTO appointment (time_id, package_id, photographer_email, client_email) VALUES (?, ?, ?, ?)"
+    CREATE = "INSERT INTO appointment (time_id, confirmed, package_id, photographer_email, client_email) VALUES (?, ?, ?, ?, ?)"
     READ_CLIENT = "SELECT * FROM appointment WHERE client_email = ?"
     READ_PHOTOGRAPHER = "SELECT * FROM appointment WHERE photographer_email = ?"
 
@@ -207,12 +208,12 @@ class Appointment:
 
     @staticmethod
     @tries_to_commit
-    def create(time_id: int, package_id: int, photographer_email: str, client_email: str) -> Appointment:
+    def create(time_id: int, confirmed: bool, package_id: int, photographer_email: str, client_email: str) -> Appointment:
         db = get_db()
-        c = db.execute(Appointment.CREATE, (time_id, package_id, photographer_email, client_email))
+        c = db.execute(Appointment.CREATE, (time_id, confirmed, package_id, photographer_email, client_email))
         db.commit()
         assert c.lastrowid is not None # TODO unstable, fix if deployed
-        return Appointment(c.lastrowid, time_id, package_id, photographer_email, client_email)
+        return Appointment(c.lastrowid, time_id, confirmed, package_id, photographer_email, client_email)
 
     @staticmethod
     def read_all(email: str, is_client = True) -> list[Appointment]:

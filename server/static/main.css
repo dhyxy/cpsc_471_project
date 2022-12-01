@@ -250,9 +250,28 @@ input::placeholder {
 }
 
 .available-time {
-  display: inline;
-  margin-left: 5px;
+  display:inline-block;
   color: darkred;
+  width: 100%;
+}
+
+.available-times-container {
+  margin: 0px;
+  margin-bottom: 25px;
+  display:inline-block
+}
+
+.available-times-container form {
+  border: none;
+  display:inline-block;
+  padding: 0px;
+  margin: 0px;
+  box-shadow: 0;
+  background: none;
+  border-radius: 0px;
+  font-family: "Pacifico", cursive;
+  text-align: center;
+  width: 300px;
 }
 
 .available-time input[type="radio"] {

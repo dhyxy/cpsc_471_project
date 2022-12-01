@@ -40,7 +40,7 @@ def appt():
             user_type = "client"
         print(user_type)
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('appt.html.jinja', user_type=user_type, appointments = appointments, photographers=photographers)
+    return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, photographers=photographers)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -163,8 +163,10 @@ def book(photographer_email: str):
     if request.method == 'POST':
         time_id = int(request.form['time_id'])
         package_id = int(request.form['package_id'])
-        db.Appointment.create(time_id, package_id, photographer_email, user.email)
-        return redirect(url_for('core.photographers', email=photographer_email))
+        confirmed = False
+        f=db.Appointment.create(time_id, confirmed, package_id, photographer_email, user.email)
+        flash("Thank you for your booking!")
+        return redirect(url_for('core.gallery', email=photographer_email))
     
     photographer = db.User.read(photographer_email)
     available_times = db.PhotographerAvailableTime.read_all(photographer_email, False)
@@ -236,6 +238,7 @@ def fetch_appointments(email: str, is_photographer: bool):
 
 def _parse_times(appointment: sqlite3.Row):
     parsed_appointment = dict(appointment)
-    parsed_appointment['start_time'] = datetime.datetime.fromisoformat(appointment['start_time'])
+    print("start: " + str(appointment['start_time']))
+    parsed_appointment['start_time'] = datetime.datetime.fromisoformat(str(appointment['start_time']))
     parsed_appointment['end_time'] = datetime.datetime.fromisoformat(appointment['end_time'])
     return parsed_appointment
