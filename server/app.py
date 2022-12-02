@@ -15,13 +15,6 @@ loggedIn = 0
 @core.route('/')
 def home():
     global user_type
-    if 'user' in g:
-        user: db.User = g.get('user')
-        if user and user.type is db.UserType.PHOTOGRAPHER:
-            user_type="photographer"
-        if user and user.type is db.UserType.CLIENT:
-            user_type = "client"
-        print(user_type)
     return render_template('home.html.jinja', user_type=user_type, photographers=photographers)
 
 @core.route('/appt')
@@ -77,8 +70,7 @@ def render_register_template(**context):
 
 @core.route('/login', methods=('GET', 'POST',))
 def login():
-    global user_type
-    global loggedIn
+    global user_type, loggedIn, curr_user
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -97,6 +89,11 @@ def login():
         if user and not err:
             session.clear()
             loggedIn = 1
+            curr_user=user
+            if user and user.type is db.UserType.PHOTOGRAPHER:
+                user_type="photographer"
+            if user and user.type is db.UserType.CLIENT:
+                user_type = "client"
             session[EMAIL_SESSION_KEY] = user.email
             return redirect(url_for('.home'))
         elif err:
@@ -106,8 +103,10 @@ def login():
 
 @core.route('/logout')
 def logout():
-    global loggedIn
+    global loggedIn, curr_user
     session.clear()
+    curr_user="none"
+    user_type="none"
     loggedIn = 0;
     return redirect(url_for('.home', user_type=user_type))
 
@@ -138,7 +137,7 @@ def edit_about(email: str):
     if request.method == 'POST':
         text = request.form['text']
         db.User.edit_about(text, email)
-    return redirect(url_for('core.gallery', user_type=user_type, email=email))
+    return redirect(url_for('core.gallery', user_type=user_type, curr_user=curr_user, email=email))
 
 
 
@@ -183,7 +182,7 @@ def book(photographer_email: str):
         confirmed = False
         db.Appointment.create(time_id, confirmed, package_id, photographer_email, user.email)
         flash("Thank you for your booking!")
-        return redirect(url_for('core.gallery', email=photographer_email))
+        return redirect(url_for('core.gallery', curr_user=curr_user, email=photographer_email))
     
     photographer = db.User.read(photographer_email)
     available_times = db.PhotographerAvailableTime.read_all(photographer_email, False)
@@ -210,7 +209,7 @@ def contact(photographer_email: str):
             
         message = request.form['message']
         db.ContactForm.create(message, emails, name, photographer_email)
-        return redirect(url_for('core.gallery', user_type=user_type, email=photographer_email))
+        return redirect(url_for('core.gallery', user_type=user_type, curr_user=curr_user, email=photographer_email))
 
     photographer = db.User.read(photographer_email)
     return render_template('contact.html.jinja', user_type=user_type, photographer=photographer, loggedIn = loggedIn)

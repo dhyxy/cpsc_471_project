@@ -66,7 +66,7 @@
     {% endfor %}
 
     {% if ns.unconfirmed_appts == "none" %}
-        No appointments are unconfirmed at this time.
+        No appointments are waiting for confirmation.
         {% if not is_photographer %}
             <a href="{{ url_for('core.photographers', next="book") }}">Set up an appointment here!</a>
         {% endif %}

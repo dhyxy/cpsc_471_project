@@ -7,11 +7,11 @@
 
 <div class="gallery-container">
     <h1 style="font-size: 40px">{{ photographer.name }}'s Gallery</h1>
+     <h2>About Me:<h2>
+    <p style="font-size:20px; font-weight:100">{{photographer.about}}</p>
 
     {% if session.get(EMAIL_SESSION_KEY) %}
         <section class="booking">
-        <h2>About Me:<h2>
-        <p style="font-size:20px; font-weight:100">{{photographer.about}}</p>
         {% if photographer.email == curr_user.email %} 
             <a style="font-weight:100" href="{{ url_for('core.edit_gallery', email=photographer.email) }}">Edit Page</a>
         {% endif %}
