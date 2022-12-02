@@ -137,8 +137,14 @@ def edit_about(email: str):
     if request.method == 'POST':
         text = request.form['text']
         db.User.edit_about(text, email)
-    return redirect(url_for('core.gallery', user_type=user_type, curr_user=curr_user, email=email))
+    return redirect(url_for('core.gallery', user_type=user_type, email=curr_user.email, photographer=curr_user))
 
+@login_required
+@core.route("/delete_album/<album_name>", methods=('POST',)) 
+def delete_album(album_name: str): 
+    global curr_user
+    db.Album.delete(curr_user.email, album_name)
+    return redirect(url_for('core.gallery', email=curr_user.email))
 
 
 @login_required

@@ -196,6 +196,7 @@ footer {
   max-width: 300px;
   padding-right: 6px;
 }
+
 form {
   border: 1px solid black;
   display: block;
@@ -287,6 +288,18 @@ input::placeholder {
   font-family: "Pacifico", cursive;
   text-align: center;
   width: 300px;
+}
+
+.gallery-container form {
+  border: none;
+  display: inline-block;
+  padding: 0px;
+  margin: 0px;
+  box-shadow: none;
+  background: none;
+  border-radius: 0px;
+  font-family: "Pacifico", cursive;
+  text-align: center;
 }
 
 .available-time input[type="radio"] {

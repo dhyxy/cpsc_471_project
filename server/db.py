@@ -293,6 +293,8 @@ class Album:
     photos: list[Photo] = field(default_factory=list, init=False)
 
     READ = "SELECT a.* FROM album a LEFT JOIN user ON a.photographer_email = user.email WHERE a.photographer_email = ?"
+    READALBUM = "SELECT a.* FROM album a LEFT JOIN user ON a.photographer_email = user.email WHERE a.photographer_email = ? AND a.name = ?"
+    DELETE = "DELETE FROM album WHERE photographer_email = ? AND name = ?"
 
     def __post_init__(self):
         # TODO: inefficient, should probably condense into a join
@@ -305,6 +307,20 @@ class Album:
         albums = [Album(**row) for row in data]
         return albums
 
+    @staticmethod
+    def readalbum(photographer_email: str, album_name: str) -> list[Album]:
+        db = get_db()
+        data = db.execute(Album.READALBUM, (photographer_email, album_name)).fetchall()
+        albums = [Album(**row) for row in data]
+        return albums
+
+    @staticmethod
+    def delete(photographer_email: str, album_name: str) -> list[Album]:
+        db = get_db()
+        db.execute(Photo.DELETE, (album_name, ))
+        db.execute(Album.DELETE, (photographer_email , album_name))
+        db.commit()
+
 @dataclass
 class Photo:
     id: int
@@ -312,6 +328,7 @@ class Photo:
     album_name: str
     
     READ = "SELECT * FROM photo WHERE album_name = ?"
+    DELETE = "DELETE FROM photo WHERE album_name = ?"
 
     @staticmethod
     def read(album_name: str) -> list[Photo]:

@@ -32,8 +32,9 @@
             {% set ns.palbums = "non empty" %}
             <h2 style="font-size: 30px"> {{ album.name }} </h2>
             {% if photographer.email == curr_user.email %} 
-                {# TODO #}
-                <a href="{{ url_for('core.gallery', email=photographer.email) }}">Remove Album</a>
+                <form action="{{ url_for('core.delete_album', album_name=album.name) }}" method="post">
+                    <input class = "subButton" type="submit" value="Remove Album">
+                </form>
             {% endif %}
             
             <div style="margin-top: 15px" class="photos-container">
