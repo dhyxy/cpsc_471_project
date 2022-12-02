@@ -8,6 +8,8 @@
         <h2 class="invoiceHead"><span>&nbsp&nbspInvoice&nbsp&nbsp</span></h2>
         <p>Photographer: <b>{{ photographer.name }}</b></p>
         <p>Photographer Contact: <b>{{ photographer.email }}</b></p>
+        <p>Client: <b>{{ client.name }}</b></p>
+        <p>Client Contact: <b>{{ appointment.client_email }}</b></p>
         <p>Date of Purchase: <b>{{ invoice.parsed_date.strftime("%c") }}</b></p>
         <p>Total Cost: <b>${{ invoice.total_cost }}</b></p>
         <p>Items Purchased:<b> {{ invoice.cost }}</b></p>

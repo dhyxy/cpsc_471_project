@@ -6,22 +6,22 @@
 <section class="contact-photographer">
     <br>
     <br>
-    <h3 id="contactHead">contact {{ photographer.name }}!</h3>
+    <h1 id="contactHead">Contact Form</h1>
     <div class="main-block">
         <form method="post">
+            <h2 id="contactHead" style="font-size:30px">Send {{photographer.name}} a message!</h2>
             {%if loggedIn == 0%}
-                <h1 id="contactHead">Contact the photographer!</h1>
                 <br>
                 <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="name">Name:&nbsp;</label>
-                <input style="float:left" size="20" maxlength="20" type="text" name="name" id="name" required>
+                <input style="float:left;  margin-top:10px" size="20" maxlength="20" type="text" name="name" id="name" required>
                 <br>
                 <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="email">Email: </label>
-                <input style="float:left;" type="email" name="email" id="email" required>
+                <input style="float:left;  margin-top:10px" type="email" name="email" id="email" required>
             {% endif %}
             <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="message">Message:</label>
-            <textarea style="float:left;" name="message" rows="5" cols="5" id="message" required></textarea>
+            <textarea style="float:left; margin-top:10px" name="message" rows="5" cols="5" id="message" required></textarea>
             <div class="subButtonPos">
-                <input class = "subButton" style = "width:15%; padding:6px"type="submit" value="contact">
+                <input class = "subButton" style = "width:15%; padding:6px; margin-top: 20px"type="submit" value="contact">
             </div>
         </form>
     </div>

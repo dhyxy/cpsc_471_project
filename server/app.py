@@ -140,7 +140,7 @@ def profile():
         db.PhotographerAvailableTime.create(start, end, user.email)
         return redirect(url_for('.profile')) # reload page after post
     
-    available_times = db.PhotographerAvailableTime.read_all(user.email)
+    available_times = db.PhotographerAvailableTime.read_all(user.email, False)
     contact_forms = db.ContactForm.read(user.email)
     return render_template(
         'profile.html.jinja', 
@@ -152,7 +152,6 @@ def profile():
     
 @login_required
 @core.route('/book/<photographer_email>', methods=('GET', 'POST'))
-
 def book(photographer_email: str):
     global user_type
     user: db.User = g.user
@@ -164,7 +163,7 @@ def book(photographer_email: str):
         time_id = int(request.form['time_id'])
         package_id = int(request.form['package_id'])
         confirmed = False
-        f=db.Appointment.create(time_id, confirmed, package_id, photographer_email, user.email)
+        db.Appointment.create(time_id, confirmed, package_id, photographer_email, user.email)
         flash("Thank you for your booking!")
         return redirect(url_for('core.gallery', email=photographer_email))
     
@@ -198,6 +197,12 @@ def contact(photographer_email: str):
     photographer = db.User.read(photographer_email)
     return render_template('contact.html.jinja', user_type=user_type, photographer=photographer, loggedIn = loggedIn)
 
+@login_required
+@core.route("/confirm_appt/<int:appointment_id>", methods=('POST',)) 
+def confirm_appt(appointment_id: int): 
+    db.Appointment.confirm(appointment_id)
+    print("confirmed: " + str(db.Appointment.read(appointment_id).confirmed))
+    return redirect(url_for('core.appt'))
 
 @login_required
 @core.route('/invoice/<int:appointment_id>')
@@ -207,9 +212,11 @@ def invoice(appointment_id: int):
     time = db.PhotographerAvailableTime.read(appointment.time_id)
     package = db.Package.read(appointment.package_id)
     photographer = db.User.read(appointment.photographer_email)
+    client = db.User.read(appointment.client_email)
+    print("client: " + client.name)
 
     invoice = db.Invoice.create(datetime.datetime.now(), package.pricing, package.items, appointment.id)
-    return render_template('invoice.html.jinja', user_type=user_type, invoice=invoice, time=time, photographer=photographer)
+    return render_template('invoice.html.jinja', user_type=user_type, appointment=appointment, invoice=invoice, time=time, client=client, photographer=photographer)
 
 # TODO: this should be a `DELETE` method, written as POST to save time for project
 @core.route("/available-time/delete/<int:id>", methods=('POST',))
@@ -229,7 +236,7 @@ def inject_constants():
     return dict(EMAIL_SESSION_KEY=EMAIL_SESSION_KEY)
 
 def fetch_appointments(email: str, is_photographer: bool):
-    db_ = db.get_db()
+    db_ = db.get_db() 
     data = db_.execute(
         f"SELECT * FROM appointment a LEFT JOIN photographer_available_time pat ON a.time_id = pat.id LEFT JOIN package p ON a.package_id = p.id WHERE a.{'photographer_email' if is_photographer else 'client_email'} = ?", 
         (email,)

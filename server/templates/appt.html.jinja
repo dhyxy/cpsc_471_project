@@ -4,21 +4,51 @@
 {%set active_page = 'appt'%}
 
 {% block content %}
+
 <div class="appointments-list">
-    <h3 style="font-size:30px;text-decoration:underline">Appointments Booked</h3>
+    <h1 style="text-decoration:underline">Appointments Booked</h1>
+    <h2> Confirmed appointments: </h2>
+
     {% for appointment in appointments %}
-        <div class="appointment-container">
-            {% if is_photographer %}
-                <h4>Clients Email: {{ appointment['client_email'] }}</h4>
-            {% else %}
-                <h4>Photographers Email: <a href="{{ url_for('core.gallery', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
-            {% endif %}
-            <p style="font-size:13px"><b>Date and time of appointment:<br>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</b></p>
-            <p>Total Cost: <b>${{ appointment['pricing']}}</b></p>
-            <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
-            <br>
-            <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
-        </div>
+        {% if appointment.confirmed == True %}
+            <div class="appointment-container">
+                {% if is_photographer %}
+                    <h4>Client's Email: {{ appointment['client_email'] }}</h4>
+                {% else %}
+                    <h4>Photographer's Email: <a href="{{ url_for('core.gallery', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
+                {% endif %}
+                <p style="font-size:13px"><b>Date and time of appointment:<br>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</b></p>
+                <p>Total Cost: <b>${{ appointment['pricing']}}</b></p>
+                <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
+                <br>
+                <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    <h2> Waiting for confirmation: </h2>
+
+    {% for appointment in appointments %}
+        {% if appointment.confirmed == False %}
+            <div class="appointment-container">
+                {% if is_photographer %}
+                    <h4>Client's Email: {{ appointment['client_email'] }}</h4>
+                {% else %}
+                    <h4>Photographer's Email: <a href="{{ url_for('core.gallery', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
+                {% endif %}
+                <p style="font-size:13px"><b>Date and time of appointment:<br>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</b></p>
+                <p>Total Cost: <b>${{ appointment['pricing']}}</b></p>
+                <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
+                <br>
+                {% if is_photographer %}
+                    <div class="subButtonPos">
+                        <form action="{{ url_for('core.confirm_appt', appointment_id=appointment.id) }}" method="post">
+                            <input style="padding:5px; text-decoration:none" class = "subButton" type="submit" value="Confirm">
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
     {% endfor %}
 </div>
 {% endblock %}

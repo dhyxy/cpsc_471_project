@@ -154,7 +154,7 @@ footer {
 .main-block {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  margin-top: 30px;
   align-items: center;
   min-height: 100vh;
 }
@@ -241,11 +241,7 @@ input::placeholder {
 }
 
 .appointments-list {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  margin: 15px;
   min-height: 100vh;
 }
 
@@ -259,6 +255,18 @@ input::placeholder {
   margin: 0px;
   margin-bottom: 25px;
   display:inline-block
+}
+
+.appointment-container form {
+  border: none;
+  display: inline-block;
+  padding: 0px;
+  margin: 0px;
+  box-shadow: none;
+  background: none;
+  border-radius: 0px;
+  font-family: "Pacifico", cursive;
+  text-align: center;
 }
 
 .available-times-container form {
@@ -280,19 +288,19 @@ input::placeholder {
 
 .appointment-container {
   display: inline-block;
+  text-align: center;
   border: 1px solid #1c87c9;
   border-radius: 10px;
-  padding-bottom: 25px;
-  padding-left: 20px;
-  padding-right: 20px;
-  margin: 20px;
+  padding: 25px;
+  margin-right: 20px;
+  margin-bottom: 25px;
   box-shadow: 0 2px 5px #4b3535;
   background: #ecc7c7;
 }
 
 .invoiceEdit {
   font-family: "Pacifico", cursive;
-  text-align: center;
+  text-align: left;
   border: 1px solid #1c87c9;
   border-radius: 10px;
   padding: 20px;
@@ -300,6 +308,9 @@ input::placeholder {
   margin: 20px;
   box-shadow: 0 2px 5px #4b3535;
   background: #ecc7c7;
+}
+.invoiceEdit h2{
+  text-align: center;
 }
 .invoiceHead span {
   background-color: white;

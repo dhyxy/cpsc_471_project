@@ -203,7 +203,7 @@ class Appointment:
     CREATE = "INSERT INTO appointment (time_id, confirmed, package_id, photographer_email, client_email) VALUES (?, ?, ?, ?, ?)"
     READ_CLIENT = "SELECT * FROM appointment WHERE client_email = ?"
     READ_PHOTOGRAPHER = "SELECT * FROM appointment WHERE photographer_email = ?"
-
+    CONFIRM = "UPDATE appointment SET confirmed = True WHERE id = ?"
     READ = "SELECT * FROM appointment WHERE id = ?"
 
     @staticmethod
@@ -227,7 +227,13 @@ class Appointment:
         db = get_db()
         data = db.execute(Appointment.READ, (appointment_id,)).fetchone()
         return Appointment(**data)
-    
+
+    @staticmethod
+    def confirm(appointment_id: int) -> Appointment:
+        db = get_db()
+        db.execute(Appointment.CONFIRM, (appointment_id,))
+        db.commit()
+        
 @dataclass
 class Invoice:
     id: int
