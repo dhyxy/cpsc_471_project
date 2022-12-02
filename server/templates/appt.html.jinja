@@ -9,8 +9,11 @@
     <h1 style="text-decoration:underline">Appointments Booked</h1>
     <h2> Confirmed appointments: </h2>
 
+    {% set ns = namespace(confirmed_appts = "none") %}
+
     {% for appointment in appointments %}
         {% if appointment.confirmed == True %}
+            {% set ns.confirmed_appts = "non empty" %}
             <div class="appointment-container">
                 {% if is_photographer %}
                     <h4>Client's Email: {{ appointment['client_email'] }}</h4>
@@ -22,14 +25,24 @@
                 <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
                 <br>
                 <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
+                <br>
+                <br>
+                <form action="{{ url_for('core.delete_appt', appointment_id=appointment.id) }}" method="post">
+                    <input style="padding:5px; text-decoration:none" class = "subButton" type="submit" value="Cancel">
+                </form>
             </div>
         {% endif %}
     {% endfor %}
+    {% if ns.confirmed_appts == "none" %}
+        No appointments have been confirmed at this time.
+    {% endif %}
 
     <h2> Waiting for confirmation: </h2>
 
+    {% set ns = namespace(unconfirmed_appts = "none") %}
     {% for appointment in appointments %}
         {% if appointment.confirmed == False %}
+            {% set ns.unconfirmed_appts = "non empty" %}
             <div class="appointment-container">
                 {% if is_photographer %}
                     <h4>Client's Email: {{ appointment['client_email'] }}</h4>
@@ -41,14 +54,23 @@
                 <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
                 <br>
                 {% if is_photographer %}
-                    <div class="subButtonPos">
-                        <form action="{{ url_for('core.confirm_appt', appointment_id=appointment.id) }}" method="post">
-                            <input style="padding:5px; text-decoration:none" class = "subButton" type="submit" value="Confirm">
-                        </form>
-                    </div>
+                    <form action="{{ url_for('core.confirm_appt', appointment_id=appointment.id) }}" method="post">
+                        <input style="padding:5px; text-decoration:none" class = "subButton" type="submit" value="Confirm">
+                    </form>
                 {% endif %}
+                <form action="{{ url_for('core.delete_appt', appointment_id=appointment.id) }}" method="post">
+                    <input style="padding:5px; text-decoration:none" class = "subButton" type="submit" value="Cancel">
+                </form>
             </div>
         {% endif %}
     {% endfor %}
+
+    {% if ns.unconfirmed_appts == "none" %}
+        No appointments are unconfirmed at this time.
+        {% if not is_photographer %}
+            <a href="{{ url_for('core.photographers', next="book") }}">Set up an appointment here!</a>
+        {% endif %}
+    {% endif %}
+
 </div>
 {% endblock %}

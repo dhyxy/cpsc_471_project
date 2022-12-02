@@ -205,6 +205,7 @@ class Appointment:
     READ_PHOTOGRAPHER = "SELECT * FROM appointment WHERE photographer_email = ?"
     CONFIRM = "UPDATE appointment SET confirmed = True WHERE id = ?"
     READ = "SELECT * FROM appointment WHERE id = ?"
+    DELETE = "DELETE FROM appointment WHERE id = ?"
 
     @staticmethod
     @tries_to_commit
@@ -233,7 +234,13 @@ class Appointment:
         db = get_db()
         db.execute(Appointment.CONFIRM, (appointment_id,))
         db.commit()
-        
+
+    @staticmethod
+    def delete(appointment_id: int) -> Appointment:
+        db = get_db()
+        db.execute(Appointment.DELETE, (appointment_id,))
+        db.commit()
+
 @dataclass
 class Invoice:
     id: int

@@ -40,7 +40,7 @@ def appt():
             user_type = "client"
         print(user_type)
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, photographers=photographers)
+    return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, num_appt = len(appointments) , photographers=photographers)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -201,8 +201,14 @@ def contact(photographer_email: str):
 @core.route("/confirm_appt/<int:appointment_id>", methods=('POST',)) 
 def confirm_appt(appointment_id: int): 
     db.Appointment.confirm(appointment_id)
-    print("confirmed: " + str(db.Appointment.read(appointment_id).confirmed))
     return redirect(url_for('core.appt'))
+
+@login_required
+@core.route("/delete_appt/<int:appointment_id>", methods=('POST',)) 
+def delete_appt(appointment_id: int): 
+    db.Appointment.delete(appointment_id)
+    return redirect(url_for('core.appt'))
+
 
 @login_required
 @core.route('/invoice/<int:appointment_id>')
