@@ -64,7 +64,7 @@ def register():
             # TODO(1): for the project we aren't hashing the password for simplicity
             # if you end up deploying this, hash the passwords on registration
             # and check password on login with hash
-            db.User.create(email, password, name, phone_number, user_type)
+            db.User.create(email, password, name, phone_number, "none", user_type)
             flash("Thank you for registering")
         except IntegrityError:
             flash(f"Email {email} is already registered")
@@ -102,14 +102,14 @@ def login():
         elif err:
             flash(err)
         
-    return render_template('login.html.jinja')
+    return render_template('login.html.jinja', user_type=user_type)
 
 @core.route('/logout')
 def logout():
     global loggedIn
     session.clear()
     loggedIn = 0;
-    return redirect(url_for('.home'))
+    return redirect(url_for('.home', user_type=user_type))
 
 @core.route('/photographers/<next>')
 def photographers(next: str):
@@ -123,6 +123,24 @@ def gallery(email: str):
     photographer = db.User.read(email)
     albums = db.Album.read(email)
     return render_template('gallery.html.jinja',user_type=user_type, curr_user=curr_user, photographer=photographer, albums=albums)
+
+@login_required
+@core.route('/edit_gallery/<email>')
+def edit_gallery(email: str):
+    global curr_user, user_type
+    photographer = db.User.read(email)
+    albums = db.Album.read(email)
+    return render_template('edit_gallery.html.jinja',user_type=user_type, curr_user=curr_user, photographer=photographer, albums=albums)
+
+@login_required
+@core.route("/edit_about/<email>", methods=('POST',)) 
+def edit_about(email: str): 
+    if request.method == 'POST':
+        text = request.form['text']
+        db.User.edit_about(text, email)
+    return redirect(url_for('core.gallery', user_type=user_type, email=email))
+
+
 
 @login_required
 @core.route('/profile', methods=('GET', 'POST'))
@@ -192,7 +210,7 @@ def contact(photographer_email: str):
             
         message = request.form['message']
         db.ContactForm.create(message, emails, name, photographer_email)
-        return redirect(url_for('core.gallery', email=photographer_email))
+        return redirect(url_for('core.gallery', user_type=user_type, email=photographer_email))
 
     photographer = db.User.read(photographer_email)
     return render_template('contact.html.jinja', user_type=user_type, photographer=photographer, loggedIn = loggedIn)
@@ -201,13 +219,13 @@ def contact(photographer_email: str):
 @core.route("/confirm_appt/<int:appointment_id>", methods=('POST',)) 
 def confirm_appt(appointment_id: int): 
     db.Appointment.confirm(appointment_id)
-    return redirect(url_for('core.appt'))
+    return redirect(url_for('core.appt', user_type=user_type, ))
 
 @login_required
 @core.route("/delete_appt/<int:appointment_id>", methods=('POST',)) 
 def delete_appt(appointment_id: int): 
     db.Appointment.delete(appointment_id)
-    return redirect(url_for('core.appt'))
+    return redirect(url_for('core.appt', user_type=user_type))
 
 
 @login_required
@@ -219,7 +237,6 @@ def invoice(appointment_id: int):
     package = db.Package.read(appointment.package_id)
     photographer = db.User.read(appointment.photographer_email)
     client = db.User.read(appointment.client_email)
-    print("client: " + client.name)
 
     invoice = db.Invoice.create(datetime.datetime.now(), package.pricing, package.items, appointment.id)
     return render_template('invoice.html.jinja', user_type=user_type, appointment=appointment, invoice=invoice, time=time, client=client, photographer=photographer)

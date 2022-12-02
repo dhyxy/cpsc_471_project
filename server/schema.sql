@@ -22,6 +22,7 @@ CREATE TABLE user (
     password TEXT NOT NULL,
     name TEXT NOT NULL,
     phone_number TEXT NOT NULL,
+    about TEXT,
     type TEXT NOT NULL REFERENCES user_type (user_type) ON DELETE CASCADE
 );
 

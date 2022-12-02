@@ -1,0 +1,30 @@
+{% extends "base.html.jinja" %}
+
+
+{% block title %}Edit Gallery{% endblock %}
+{%set active_page = 'edit_gallery'%}
+{% block content %}
+
+<div style="display:center" class="edit-gallery-container">
+    <section class="edit-gallery">
+    <br>
+    <br>
+    <h1 id="contactHead">Edit your page:</h1>
+
+    {# TODO #}
+    <a style="font-weight:100" href="{{ url_for('core.edit_gallery', email=photographer.email) }}">Upload Images</a>
+
+    <div class="main-block">
+        <form action="{{ url_for('core.edit_about', email=photographer.email) }}" method="post">
+            <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="text">Edit about section:</label>
+            <textarea style="float:left; margin-top:10px" name="text" rows="5" cols="5" id="text" required></textarea>
+            <div class="subButtonPos">
+                <input class = "subButton" style = "width:15%; padding:6px; margin-top: 20px"type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+</section>
+</div>
+{% endblock %}
+
+

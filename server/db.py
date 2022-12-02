@@ -40,13 +40,13 @@ def init_db():
             click.echo(e)
     
     cursor = db.cursor()
-    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo@email.com', 'password', 'Anna', '123', 'photographer');")
-    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo2@email.com', 'password', 'Kyle', '234', 'photographer');")
-    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('photo3@email.com', 'password', 'Jane', '234', 'photographer');")
-    cursor.execute("INSERT INTO album(name, type, release_type, photographer_email) VALUES ('alb1', 'photos', 'idk', 'photo@email.com');")
-    cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'alb1');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo@email.com', 'password', 'Anna', '123', 'I love taking pictures! My cat is my everything <3', 'photographer');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo2@email.com', 'password', 'Kyle', '234', 'none', 'photographer');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo3@email.com', 'password', 'Jane', '234', 'none', 'photographer');")
+    cursor.execute("INSERT INTO album(name, type, release_type, photographer_email) VALUES ('Nature', 'photos', 'idk', 'photo@email.com');")
+    cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'Nature');")
     cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo@email.com');")
-    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('client@email.com', 'password', 'client', '123', 'none', 'client');")
     cursor.close()
     db.commit()
 
@@ -79,11 +79,12 @@ class User:
     password: str
     name: str
     phone_number: str
+    about: str
     type: UserType
 
-    CREATE = "INSERT INTO user (email, password, name, phone_number, type) VALUES (?, ?, ?, ?, ?)"
+    CREATE = "INSERT INTO user (email, password, name, phone_number, about, type) VALUES (?, ?, ?, ?, ?)"
     READ = "SELECT * FROM user WHERE email = ?"
-
+    EDIT_ABOUT = "UPDATE user SET about = ? WHERE email = ?"
     LIST_PHOTOGRAPHERS = "SELECT * FROM user WHERE type = 'photographer'"
 
     def __post_init__(self):
@@ -92,11 +93,11 @@ class User:
 
     @staticmethod
     @tries_to_commit
-    def create(email: str, password: str, name: str, phone_number: str, type: UserType) -> User:
+    def create(email: str, password: str, name: str, phone_number: str, about: str, type: UserType) -> User:
         db = get_db()
-        db.execute(User.CREATE, (email, password, name, phone_number, type.value))
+        db.execute(User.CREATE, (email, password, name, phone_number, about, type.value))
         db.commit()
-        return User(email, password, name, phone_number, type)
+        return User(email, password, name, phone_number, about, type)
 
     @staticmethod 
     def read(email: str) -> User:
@@ -106,6 +107,12 @@ class User:
             raise ValueError(f"no user exists with email: {email}")
         user = User(**data)
         return user
+
+    @staticmethod
+    def edit_about(text: str, email: str) -> Appointment:
+        db = get_db()
+        db.execute(User.EDIT_ABOUT, (text, email))
+        db.commit()
 
     @staticmethod
     def list_photographers() -> list[User]:

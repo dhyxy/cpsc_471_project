@@ -151,6 +151,13 @@ footer {
   text-decoration: underline;
   font-size: 35px;
 }
+.edit-gallery-container a{ 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 20px;
+  margin-top: 30px;
+}
 .main-block {
   display: flex;
   flex-direction: column;
@@ -274,7 +281,7 @@ input::placeholder {
   display:inline-block;
   padding: 0px;
   margin: 0px;
-  box-shadow: 0;
+  box-shadow: none;
   background: none;
   border-radius: 0px;
   font-family: "Pacifico", cursive;

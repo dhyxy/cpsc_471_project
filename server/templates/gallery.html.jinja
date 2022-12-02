@@ -10,9 +10,10 @@
 
     {% if session.get(EMAIL_SESSION_KEY) %}
         <section class="booking">
+        <h2>About Me:<h2>
+        <p style="font-size:20px; font-weight:100">{{photographer.about}}</p>
         {% if photographer.email == curr_user.email %} 
-            {# TODO #}
-            <a href="{{ url_for('core.gallery', email=photographer.email) }}">Upload Albums!</a>
+            <a style="font-weight:100" href="{{ url_for('core.edit_gallery', email=photographer.email) }}">Edit Page</a>
         {% endif %}
         {% if user_type != "photographer" %}
             <a href="{{ url_for('core.contact', photographer_email=photographer.email) }}">Contact</a> 
@@ -24,11 +25,18 @@
         <a href="{{ url_for('core.register') }}">Register or sign in to book with this photographer!</a>
     {% endif %}
 
-    <section class="albums">
+    {% set ns = namespace(palbums = "none") %}
+    <section class="albums"}
     {% for album in albums %}
         <div class="album-container">
-            <h2 style="font-size: 30px; margin-bottom: 15px"> {{ album.name }} </h2>
-            <div class="photos-container">
+            {% set ns.palbums = "non empty" %}
+            <h2 style="font-size: 30px"> {{ album.name }} </h2>
+            {% if photographer.email == curr_user.email %} 
+                {# TODO #}
+                <a href="{{ url_for('core.gallery', email=photographer.email) }}">Remove Album</a>
+            {% endif %}
+            
+            <div style="margin-top: 15px" class="photos-container">
 
                 <img src={{url_for('static', filename='flower1.jpg')}}>
                 <img src={{url_for('static', filename='flower2.jpg')}}>
@@ -47,6 +55,9 @@
         </div>
     {% endfor %}
     </section>
+    {% if ns.palbums == "none" %}
+        <p style="font-size:18px">This photographer has not yet uploaded any albums. Check back later!</p>
+    {% endif %}
 </div>
 {% endblock %}
 
