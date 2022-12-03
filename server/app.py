@@ -37,7 +37,6 @@ def appt():
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
-    global user_type
     if request.method == 'POST':
         err = None
 
@@ -173,6 +172,37 @@ def manage():
         contact_forms=contact_forms
     )
     
+@login_required
+@core.route('/create_photographer', methods=('GET', 'POST'))
+def create_photographer():
+    global user_type
+    if request.method == 'POST':
+        err = None
+
+        email = request.form['email']
+        password = request.form['password']
+        name = request.form['name']
+        phone_number = request.form['phone_number']
+        about = request.form['about']
+        account_type =  db.UserType.PHOTOGRAPHER
+        
+        if not (email and password and name and phone_number and about):
+            err = "All fields must be entered"
+        
+        if err:
+            return render_register_template(error=err)
+
+        try:
+            # TODO(1): for the project we aren't hashing the password for simplicity
+            # if you end up deploying this, hash the passwords on registration
+            # and check password on login with hash
+            db.User.create(email, password, name, phone_number, about, account_type)
+            flash("Photographer account created")
+        except IntegrityError:
+            flash(f"Email {email} is already registered")
+        return redirect(url_for('.manage'))
+    return render_template('create_photographer.html.jinja', user_type=user_type)
+
 @login_required
 @core.route('/book/<photographer_email>', methods=('GET', 'POST'))
 def book(photographer_email: str):

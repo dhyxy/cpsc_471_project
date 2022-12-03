@@ -7,10 +7,14 @@
 <div class="manage-intro">
     <h1>Manage Account</h1>
     <h2>Hey {{ user.name }}!</h2>
+    <p>_____________________________</p>
+    <br>
+    <a href="{{ url_for('core.create_photographer') }}">Add a photographer</a>
+    <p>_____________________________</p>
 </div>
 
 <div class="available-times-container">
-<p>Your Available Times:</p>
+<h3>Your Available Times:</h3>
 {% set ns = namespace(times = "none") %}
 {% for available_time in available_times %}
     <div class="available-time">
@@ -29,7 +33,7 @@
 <br>
 <br>
 <div class="add-available-time-container">
-<p style="padding-top:20px" >Add New Available Time</p>
+<h3>Add New Available Time</h3>
 <form method="post">
     <label for="start">start</label>
     <input type="datetime-local" name="start" id="start" required>
