@@ -9,7 +9,7 @@
         <p> available dates and times: </p>
         {% for available_time in available_times %}
             <div class="available-time">
-                <input id = "availableID" type="radio" name="time_id" id="selected_time" value="{{ available_time.id }}">
+                <input id = "availableID" type="radio" name="time_id" id="selected_time" value="{{ available_time.id }}" required>
                 <label class = "availableLabelID" for="selected_time">{{ available_time.start_parsed.strftime("%c") }} - {{ available_time.end_parsed.strftime("%c") }}</label>
             </div>
             <br>
@@ -17,14 +17,14 @@
         {%if not available_times%}
             <p><i>no times available</i></p> 
         {%else%}
-            <label for="package">select your package:</label>
+            <label for="package">select your package:</label> 
             <select name="package_id" id="package">
                 {% for package in packages %}
                     <option value="{{package.id}}">{{package.items}} - ${{package.pricing}}</option>
                 {% endfor %}
             </select>
             <div class ="subButtonPos" style="padding-top:20px">
-                <input class = "subButton" style="padding: 2px;" type="submit" value="book!">
+                <input class = "subButton" style="padding: 2px;" type="submit" value="Book">
             </div>
         {%endif%}
     </form>

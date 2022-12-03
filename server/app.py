@@ -148,11 +148,11 @@ def delete_album(album_name: str):
 
 
 @login_required
-@core.route('/profile', methods=('GET', 'POST'))
-def profile():
+@core.route('/manage', methods=('GET', 'POST'))
+def manage():
     global user_type
     user: db.User = g.user
-    # for rn, /profile is only for photographers
+    # for rn, /manage is only for photographers
     if user.type is not db.UserType.PHOTOGRAPHER:
         flash("You don't have sufficient permissions to access this page")
         return redirect(url_for('.home'))
@@ -161,12 +161,12 @@ def profile():
         start = request.form['start']
         end = request.form['end']
         db.PhotographerAvailableTime.create(start, end, user.email)
-        return redirect(url_for('.profile')) # reload page after post
+        return redirect(url_for('.manage')) # reload page after post
     
     available_times = db.PhotographerAvailableTime.read_all(user.email, False)
     contact_forms = db.ContactForm.read(user.email)
     return render_template(
-        'profile.html.jinja', 
+        'manage.html.jinja', 
         user=user, 
         user_type=user_type,
         available_times=available_times, 
@@ -183,12 +183,21 @@ def book(photographer_email: str):
         return redirect(url_for('.home'))
 
     if request.method == 'POST':
+        err = None
         time_id = int(request.form['time_id'])
         package_id = int(request.form['package_id'])
         confirmed = False
+
+        if not (time_id and package_id):
+            err = "All fields must be entered"
+        
+        if err:
+            return render_register_template(error=err)
+
         db.Appointment.create(time_id, confirmed, package_id, photographer_email, user.email)
         flash("Thank you for your booking!")
         return redirect(url_for('core.gallery', curr_user=curr_user, email=photographer_email))
+
     
     photographer = db.User.read(photographer_email)
     available_times = db.PhotographerAvailableTime.read_all(photographer_email, False)
@@ -250,7 +259,7 @@ def invoice(appointment_id: int):
 @core.route("/available-time/delete/<int:id>", methods=('POST',))
 def delete_available_time(id: int):
     db.PhotographerAvailableTime.delete(id)
-    return redirect(url_for('.profile'))
+    return redirect(url_for('.manage'))
 
 @core.before_app_request
 def load_user():
