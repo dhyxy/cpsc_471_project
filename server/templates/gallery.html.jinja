@@ -34,7 +34,7 @@
                 <h2 style="font-size: 30px"> {{ album.name }} </h2>
                 {% if photographer.email == curr_user.email %} 
                     <form action="{{ url_for('core.delete_album', album_name=album.name) }}" method="post">
-                        <input class = "subButton" type="submit" value="Remove Album">
+                        <input class = "subButton" style="margin:0px; float:left; width:150px" type="submit" value="Remove Album">
                     </form>
                 {% endif %}
                 
