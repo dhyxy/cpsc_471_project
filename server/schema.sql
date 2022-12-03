@@ -38,6 +38,7 @@ CREATE TABLE album (
     name TEXT PRIMARY KEY NOT NULL,
     type TEXT NOT NULL,
     release_type TEXT NOT NULL,
+    client_email TEXT REFERENCES user (email) ON DELETE CASCADE,
     photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
  );
 

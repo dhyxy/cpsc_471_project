@@ -43,10 +43,10 @@ def init_db():
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo@email.com', 'password', 'Anna', '123', 'I love taking pictures! My cat is my everything <3', 'photographer');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo2@email.com', 'password', 'Kyle', '234', 'none', 'photographer');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo3@email.com', 'password', 'Jane', '234', 'none', 'photographer');")
-    cursor.execute("INSERT INTO album(name, type, release_type, photographer_email) VALUES ('Nature', 'photos', 'idk', 'photo@email.com');")
+    cursor.execute("INSERT INTO album(name, type, release_type, client_email, photographer_email) VALUES ('Nature', 'photos', 'public', 'photo@email.com', 'photo@email.com');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'Nature');")
     cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo@email.com');")
-    cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('client@email.com', 'password', 'client', '123', 'none', 'client');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('client@email.com', 'password', 'client', '123', NULL, 'client');")
     cursor.close()
     db.commit()
 
@@ -288,6 +288,7 @@ class Album:
     name: str
     type: str
     release_type: str
+    client_email: str
     photographer_email: str
 
     photos: list[Photo] = field(default_factory=list, init=False)

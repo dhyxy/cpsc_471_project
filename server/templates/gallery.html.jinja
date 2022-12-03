@@ -28,32 +28,34 @@
     {% set ns = namespace(palbums = "none") %}
     <section class="albums"}
     {% for album in albums %}
-        <div class="album-container">
-            {% set ns.palbums = "non empty" %}
-            <h2 style="font-size: 30px"> {{ album.name }} </h2>
-            {% if photographer.email == curr_user.email %} 
-                <form action="{{ url_for('core.delete_album', album_name=album.name) }}" method="post">
-                    <input class = "subButton" type="submit" value="Remove Album">
-                </form>
-            {% endif %}
-            
-            <div style="margin-top: 15px" class="photos-container">
+        {% if album.release_type == 'public' %}
+            <div class="album-container">
+                {% set ns.palbums = "non empty" %}
+                <h2 style="font-size: 30px"> {{ album.name }} </h2>
+                {% if photographer.email == curr_user.email %} 
+                    <form action="{{ url_for('core.delete_album', album_name=album.name) }}" method="post">
+                        <input class = "subButton" type="submit" value="Remove Album">
+                    </form>
+                {% endif %}
+                
+                <div style="margin-top: 15px" class="photos-container">
 
-                <img src={{url_for('static', filename='flower1.jpg')}}>
-                <img src={{url_for('static', filename='flower2.jpg')}}>
-                <img src={{url_for('static', filename='flower3.jpg')}}>
-                <img src={{url_for('static', filename='flower1.jpg')}}>
-                <img src={{url_for('static', filename='flower2.jpg')}}>
-                <img src={{url_for('static', filename='flower3.jpg')}}>
-                <img src={{url_for('static', filename='flower1.jpg')}}>
-                <img src={{url_for('static', filename='flower2.jpg')}}>
-                <img src={{url_for('static', filename='flower3.jpg')}}>
+                    <img src={{url_for('static', filename='flower1.jpg')}}>
+                    <img src={{url_for('static', filename='flower2.jpg')}}>
+                    <img src={{url_for('static', filename='flower3.jpg')}}>
+                    <img src={{url_for('static', filename='flower1.jpg')}}>
+                    <img src={{url_for('static', filename='flower2.jpg')}}>
+                    <img src={{url_for('static', filename='flower3.jpg')}}>
+                    <img src={{url_for('static', filename='flower1.jpg')}}>
+                    <img src={{url_for('static', filename='flower2.jpg')}}>
+                    <img src={{url_for('static', filename='flower3.jpg')}}>
 
-                {% for photo in album.photos %}
-                    {# <img src={{url_for('static', filename=photo.pathname)}}> #}
-                {% endfor %}
+                    {% for photo in album.photos %}
+                        {# <img src={{url_for('static', filename=photo.pathname)}}> #}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+        {% endif %}
     {% endfor %}
     </section>
     {% if ns.palbums == "none" %}
