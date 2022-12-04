@@ -82,7 +82,7 @@ class User:
     about: str
     type: UserType
 
-    CREATE = "INSERT INTO user (email, password, name, phone_number, about, type) VALUES (?, ?, ?, ?, ?)"
+    CREATE = "INSERT INTO user (email, password, name, phone_number, about, type) VALUES (?, ?, ?, ?, ?, ?)"
     READ = "SELECT * FROM user WHERE email = ?"
     EDIT_ABOUT = "UPDATE user SET about = ? WHERE email = ?"
     LIST_PHOTOGRAPHERS = "SELECT * FROM user WHERE type = 'photographer'"

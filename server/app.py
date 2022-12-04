@@ -44,6 +44,7 @@ def register():
         password = request.form['password']
         name = request.form['name']
         phone_number = request.form['phone_number']
+        about = "none"
         user_type =  db.UserType.CLIENT
         
         if not (email and password and name and phone_number):
@@ -56,7 +57,7 @@ def register():
             # TODO(1): for the project we aren't hashing the password for simplicity
             # if you end up deploying this, hash the passwords on registration
             # and check password on login with hash
-            db.User.create(email, password, name, phone_number, "none", user_type)
+            db.User.create(email, password, name, phone_number, about, user_type)
             flash("Thank you for registering")
         except IntegrityError:
             flash(f"Email {email} is already registered")
