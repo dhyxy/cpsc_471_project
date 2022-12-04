@@ -14,11 +14,14 @@ def home():
     photographers = db.User.list_photographers()
     is_photographer = False
     appointments = []
+    feedbacks = None
     if 'user' in g:
         user: db.User = g.get('user')
         is_photographer = user and user.type is db.UserType.PHOTOGRAPHER
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('home.html.jinja', photographers=photographers, is_photographer=is_photographer, appointments=appointments)
+        if is_photographer:
+            feedbacks = db.FeedbackForm.read_all(photographer_email=user.email)
+    return render_template('home.html.jinja', photographers=photographers, is_photographer=is_photographer, appointments=appointments, feedbacks=feedbacks)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -164,6 +167,29 @@ def invoice(appointment_id: int):
 
     invoice = db.Invoice.create(datetime.datetime.now(), package.pricing, package.items, appointment.id)
     return render_template('invoice.html.jinja', invoice=invoice, time=time, photographer=photographer)
+
+@login_required
+@core.route('/feedback/<int:invoice_id>', methods=('GET', 'POST',))
+def feedback(invoice_id: int):
+    user: db.User = g.user
+    if not user or user.type is not db.UserType.CLIENT:
+        flash("You must be a logged in client to leave feedback")
+        return redirect(url_for('.home'))
+
+    invoice = db.Invoice.read(invoice_id)
+    if not invoice:
+        flash('error retrieving data, contact admin')
+        return redirect(url_for('.home'))
+
+    feedback_exists = db.FeedbackForm.exists(invoice.id)
+    
+    if not feedback_exists and request.method == 'POST':
+        appointment = db.Appointment.read(invoice.appointment_id)
+        message = request.form['message']
+        db.FeedbackForm.create(message, appointment.client_email, appointment.photographer_email, invoice.id)
+        return redirect(url_for('.invoice', appointment_id=appointment.id))
+
+    return render_template('feedback.html.jinja', invoice=invoice, feedback_exists=feedback_exists)
 
 # TODO: this should be a `DELETE` method, written as POST to save time for project
 @core.route("/available-time/delete/<int:id>", methods=('POST',))
