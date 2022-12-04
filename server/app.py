@@ -44,7 +44,7 @@ def register():
         password = request.form['password']
         name = request.form['name']
         phone_number = request.form['phone_number']
-        about = "none"
+        about = "null"
         user_type =  db.UserType.CLIENT
         
         if not (email and password and name and phone_number):
