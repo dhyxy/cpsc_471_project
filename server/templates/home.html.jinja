@@ -39,4 +39,14 @@ welcome to home!
         </div>
     {% endfor %}
 </div>
+{% if is_photographer %}
+<div class="feedbacks">
+    <h3>feedback you've received!</h3>
+    {% for feedback in feedbacks %}
+    <div class="feedback">
+        feedback from {{ feedback.client_email }}: {{ feedback.message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}
