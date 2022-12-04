@@ -43,10 +43,12 @@ def init_db():
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo@email.com', 'password', 'Anna', '123', 'I love taking pictures! My cat is my everything <3', 'photographer');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo2@email.com', 'password', 'Kyle', '234', '', 'photographer');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo3@email.com', 'password', 'Jane', '234', '', 'photographer');")
-    cursor.execute("INSERT INTO album(name, type, release_type, client_email, photographer_email) VALUES ('Nature', 'photos', 'public', 'photo@email.com', 'photo@email.com');")
-    cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('/test/img.png', 'Nature');")
+    cursor.execute("INSERT INTO album(name, release_type, client_email, photographer_email) VALUES ('Nature', 'public', 'photo@email.com', 'photo@email.com');")
+    cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden1.jpg', 'Nature');")
+    cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden2.jpg', 'Nature');")
+    cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden3.jpg', 'Nature');")
     cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo@email.com');")
-    cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('client@email.com', 'password', 'client', '123', NULL, 'client');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
     cursor.close()
     db.commit()
 
@@ -82,7 +84,8 @@ class User:
     about: str
     type: UserType
 
-    CREATE = "INSERT INTO user (email, password, name, phone_number, about, type) VALUES (?, ?, ?, ?, ?, ?)"
+    CREATE_P = "INSERT INTO user (email, password, name, phone_number, about, type) VALUES (?, ?, ?, ?, ?, ?)"
+    CREATE_C = "INSERT INTO user (email, password, name, phone_number, type) VALUES (?, ?, ?, ?, ?)"
     READ = "SELECT * FROM user WHERE email = ?"
     EDIT_ABOUT = "UPDATE user SET about = ? WHERE email = ?"
     LIST_PHOTOGRAPHERS = "SELECT * FROM user WHERE type = 'photographer'"
@@ -93,11 +96,17 @@ class User:
 
     @staticmethod
     @tries_to_commit
-    def create(email: str, password: str, name: str, phone_number: str, about: str, type: UserType) -> User:
+    def create_photographer(email: str, password: str, name: str, phone_number: str, about: str, type: UserType) -> User:
         db = get_db()
-        db.execute(User.CREATE, (email, password, name, phone_number, about, type.value))
+        db.execute(User.CREATE_P, (email, password, name, phone_number, about, type.value))
         db.commit()
         return User(email, password, name, phone_number, about, type)
+
+    def create_client(email: str, password: str, name: str, phone_number: str, type: UserType) -> User:
+        db = get_db()
+        db.execute(User.CREATE_C, (email, password, name, phone_number, type.value))
+        db.commit()
+        return User(email, password, name, phone_number, type)
 
     @staticmethod 
     def read(email: str) -> User:
@@ -286,13 +295,13 @@ class Invoice:
 @dataclass
 class Album:
     name: str
-    type: str
     release_type: str
     client_email: str
     photographer_email: str
 
     photos: list[Photo] = field(default_factory=list, init=False)
 
+    CREATE = "INSERT OR REPLACE INTO album(name, release_type, client_email, photographer_email) VALUES (?, ?, ?, ?)"
     READ = "SELECT a.* FROM album a LEFT JOIN user ON a.photographer_email = user.email WHERE a.photographer_email = ?"
     READALBUM = "SELECT a.* FROM album a LEFT JOIN user ON a.photographer_email = user.email WHERE a.photographer_email = ? AND a.name = ?"
     DELETE = "DELETE FROM album WHERE photographer_email = ? AND name = ?"
@@ -300,6 +309,14 @@ class Album:
     def __post_init__(self):
         # TODO: inefficient, should probably condense into a join
         self.photos = Photo.read(self.name)
+
+    @staticmethod 
+    def create(album_name: str, release_type: str, client_email: str, photographer_email: str) -> Album:
+        db = get_db()
+        db.execute(Album.CREATE, (album_name, release_type, client_email, photographer_email))
+        db.commit()
+        return Album(album_name, release_type, client_email, photographer_email)
+
 
     @staticmethod
     def read(photographer_email: str) -> list[Album]:
@@ -328,8 +345,18 @@ class Photo:
     pathname: str
     album_name: str
     
+    CREATE = "INSERT INTO photo(pathname, album_name) VALUES (?, ?)"
     READ = "SELECT * FROM photo WHERE album_name = ?"
     DELETE = "DELETE FROM photo WHERE album_name = ?"
+
+    @staticmethod 
+    def create(pathname: str, album_name: str) -> Album:
+        db = get_db()
+        c = db.execute(Photo.CREATE, (pathname, album_name))
+        db.commit()
+        assert c.lastrowid is not None # TODO unstable, fix if deployed
+        return Photo(c.lastrowid, pathname, album_name)
+
 
     @staticmethod
     def read(album_name: str) -> list[Photo]:

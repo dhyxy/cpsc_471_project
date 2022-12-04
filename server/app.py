@@ -44,7 +44,6 @@ def register():
         password = request.form['password']
         name = request.form['name']
         phone_number = request.form['phone_number']
-        about = "null"
         user_type =  db.UserType.CLIENT
         
         if not (email and password and name and phone_number):
@@ -57,7 +56,7 @@ def register():
             # TODO(1): for the project we aren't hashing the password for simplicity
             # if you end up deploying this, hash the passwords on registration
             # and check password on login with hash
-            db.User.create(email, password, name, phone_number, about, user_type)
+            db.User.create_client(email, password, name, phone_number, user_type)
             flash("Thank you for registering")
         except IntegrityError:
             flash(f"Email {email} is already registered")
@@ -121,6 +120,7 @@ def gallery(email: str):
     global curr_user, user_type
     photographer = db.User.read(email)
     albums = db.Album.read(email)
+    print(albums)
     return render_template('gallery.html.jinja',user_type=user_type, curr_user=curr_user, photographer=photographer, albums=albums)
 
 @login_required
@@ -138,6 +138,24 @@ def edit_about(email: str):
         text = request.form['text']
         db.User.edit_about(text, email)
     return redirect(url_for('core.gallery', user_type=user_type, email=curr_user.email, photographer=curr_user))
+
+@login_required
+@core.route('/add_album/<email>',  methods=('POST',))
+def add_album(email: str):
+    if request.method == 'POST':
+        album_name = request.form['album_name']
+        release_type = request.form['release_type']
+        if request.form['album_type'] == "client":
+            client_email = request.form['client_email']
+            db.Album.create(album_name, release_type, client_email, email)
+        else:
+            db.Album.create(album_name, release_type, email, email)
+        photos = request.form['photos']
+        pathnames = photos.split(",")
+        for pathname in pathnames:
+            db.Photo.create(pathname, album_name)
+    return redirect(url_for('core.gallery', user_type=user_type, email=curr_user.email, photographer=curr_user))
+
 
 @login_required
 @core.route("/delete_album/<album_name>", methods=('POST',)) 
@@ -197,7 +215,7 @@ def create_photographer():
             # TODO(1): for the project we aren't hashing the password for simplicity
             # if you end up deploying this, hash the passwords on registration
             # and check password on login with hash
-            db.User.create(email, password, name, phone_number, about, account_type)
+            db.User.create_photographer(email, password, name, phone_number, about, account_type)
             flash("Photographer account created")
         except IntegrityError:
             flash(f"Email {email} is already registered")

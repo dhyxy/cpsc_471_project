@@ -40,18 +40,8 @@
                 
                 <div style="margin-top: 15px" class="photos-container">
 
-                    <img src={{url_for('static', filename='flower1.jpg')}}>
-                    <img src={{url_for('static', filename='flower2.jpg')}}>
-                    <img src={{url_for('static', filename='flower3.jpg')}}>
-                    <img src={{url_for('static', filename='flower1.jpg')}}>
-                    <img src={{url_for('static', filename='flower2.jpg')}}>
-                    <img src={{url_for('static', filename='flower3.jpg')}}>
-                    <img src={{url_for('static', filename='flower1.jpg')}}>
-                    <img src={{url_for('static', filename='flower2.jpg')}}>
-                    <img src={{url_for('static', filename='flower3.jpg')}}>
-
                     {% for photo in album.photos %}
-                        {# <img src={{url_for('static', filename=photo.pathname)}}> #}
+                        <img src={{url_for('static', filename=photo.pathname)}}> 
                     {% endfor %}
                 </div>
             </div>
