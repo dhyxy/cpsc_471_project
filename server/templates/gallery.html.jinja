@@ -1,0 +1,57 @@
+{% extends "base.html.jinja" %}
+
+
+{% block title %}Gallery{% endblock %}
+{%set active_page = 'gallery'%}
+{% block content %}
+
+<div class="gallery-container">
+    <h1 style="font-size: 40px">{{ photographer.name }}'s Gallery</h1>
+     <h2>About Me:<h2>
+    <p style="font-size:20px; font-weight:100">{{photographer.about}}</p>
+
+    {% if session.get(EMAIL_SESSION_KEY) %}
+        <section class="booking">
+        {% if photographer.email == curr_user.email %} 
+            <a style="font-weight:100" href="{{ url_for('core.edit_gallery', email=photographer.email) }}">Edit Page</a>
+        {% endif %}
+        {% if user_type != "photographer" %}
+            <a href="{{ url_for('core.contact', photographer_email=photographer.email) }}">Contact</a> 
+            <a href="{{ url_for('core.book', photographer_email=photographer.email) }}">Book a Session!</a>
+        {% endif %}
+        </section>
+    {% else %}
+        <a href="{{ url_for('core.contact', photographer_email=photographer.email) }}">Contact</a> 
+        <a href="{{ url_for('core.register') }}">Register or sign in to book with this photographer!</a>
+    {% endif %}
+
+    {% set ns = namespace(palbums = "none") %}
+    <section class="albums"}
+    {% for album in albums %}
+        {% if album.release_type == 'public' %}
+            <div class="album-container">
+                {% set ns.palbums = "non empty" %}
+                <h2 style="font-size: 30px"> {{ album.name }} </h2>
+                {% if photographer.email == curr_user.email %} 
+                    <form action="{{ url_for('core.delete_album', album_name=album.name) }}" method="post">
+                        <input class = "subButton" style="margin:0px; float:left; width:150px" type="submit" value="Remove Album">
+                    </form>
+                {% endif %}
+                
+                <div style="margin-top: 15px" class="photos-container">
+
+                    {% for photo in album.photos %}
+                        <img src={{url_for('static', filename=photo.pathname)}}> 
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    </section>
+    {% if ns.palbums == "none" %}
+        <p style="font-size:18px">This photographer has not yet uploaded any albums. Check back later!</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+

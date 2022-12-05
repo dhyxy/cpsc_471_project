@@ -1,7 +1,7 @@
 {% extends "base.html.jinja" %}
 
 {% block title %} login {% endblock %}
-
+{%set active_page = 'login'%}
 {% block content %}
 {% with messages=get_flashed_messages() %}
     {% if messages %}
@@ -12,12 +12,22 @@
         </div>
     {% endif %}
 {% endwith %}
-
-<form method="post">
-    <label for="email">email</label>
-    <input type="email" name="email" id="email" required>
-    <label for="password">password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="login">
-</form>
+<div class="positionForm">
+    <div class="main-block">
+        <form method="post">
+            <h3 id="contactHead">Login</h3>
+            <label style="float:left; padding-left:20px" for="email">Email:    &nbsp;</label>
+            <input style="width:83%; float: right" type="email" name="email" id="email" required><span>&nbsp;&nbsp;</span>
+            <br>
+            <label style="float:left;  margin-top: 15px; padding-left:20px" for="phone_number">Password: &nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <input style="width:83%; float: right" size="20" maxlength="20" type="text" name="password" id="password" required>
+            <br>
+            <br>
+            <div class="subButtonPos">
+                <input class = "subButton" type="submit" value="login">
+            </div>
+        </form>
+        <a  href="{{ url_for('core.register') }}">Need an account? Sign up here!</a>
+    </div>
+</div>
 {% endblock %}

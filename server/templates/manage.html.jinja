@@ -1,0 +1,55 @@
+{% extends "base.html.jinja" %}
+
+{# this template is only for photographers atm #}
+{% block title %}manage{% endblock %}
+{%set active_page = 'manage'%}
+{% block content %}
+<div class="manage-intro">
+    <h1 style="text-decoration:underline">Manage Account</h1>
+    <h2>Hey {{ user.name }}!</h2>
+    <p>_____________________________</p>
+    <br>
+    <a style="font-size:18px" href="{{ url_for('core.create_photographer') }}">Add a photographer</a>
+    <p>_____________________________</p>
+</div>
+
+<div class="available-times-container">
+<h3>Your Available Times:</h3>
+{% set ns = namespace(times = "none") %}
+{% for available_time in available_times %}
+    <div class="available-time">
+        {% set ns.times = "non empty" %}
+        <input type="datetime-local" style="width:25%" name="start" id="start" value="{{ available_time.start_time }}" disabled> - <input type="datetime-local" style="width:25%" name="end" id="end" value="{{ available_time.end_time }}" disabled>
+        <form action="{{ url_for('core.delete_available_time', id=available_time.id) }}" method="post">
+            <input style="width:15%" type="submit" value="X">
+        </form>
+        </div>
+{% endfor %}
+{% if ns.times == "none" %}
+    <br>    
+    <p style="font-size:18px">You have no available times set. Add more to get bookings!</p>
+{% endif %}
+</div>
+<br>
+<br>
+<div class="add-available-time-container">
+<h3>Add New Available Time</h3>
+<form method="post">
+    <label for="start">start</label>
+    <input type="datetime-local" name="start" id="start" required>
+    <label for="end">end</label>
+    <input type="datetime-local" name="end" id="end" required>
+    <input type="submit" value="add new available timing">
+</form>
+</div>
+
+<div class="contact-forms">
+    {% for contact_form in contact_forms %}
+    <div class="contact-form">
+        <p>sender: {{contact_form.client_name}}</p>
+        <p>from: {{ contact_form.client_email }}</p>
+        <p>message: {{ contact_form.message }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

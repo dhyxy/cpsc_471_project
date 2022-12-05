@@ -3,12 +3,43 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300&display=swap"
+      rel="stylesheet"
+    />
     <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
-    <a href="{{ url_for('core.home') }}">home</a>
-    <div class="content">
-        {% block content %}{% endblock %}
+    <div class="allButFooter">
+        <div class="header">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="log" />
+                <div class="header-right">
+                    <a class="inactive {{'active' if active_page == 'home'}}" href="{{url_for('core.home')}}">Home</a>
+                    <a class="inactive {{'active' if active_page == 'gallery'}}" href="{{ url_for('core.photographers', next="gallery") }}">Gallery</a>
+                    {% if session.get(EMAIL_SESSION_KEY) %}
+                    {% if user_type=="client" %}
+                        <a class="inactive {{'active' if active_page == 'booking'}}" href="{{ url_for('core.photographers', next="book") }}">Book</a>
+                    {% endif %}
+                        <a class="inactive {{'active' if active_page == 'appt'}}" href ="{{url_for('core.appt') }}">Appointments</a>
+                    {% if user_type=="photographer" %}
+                        <a class="inactive {{'active' if active_page == 'manage'}}" href="{{ url_for('core.manage') }}">Manage</a>
+                    {% endif %}
+                        <a class="inactive {{'active' if active_page == 'logout'}}" href="{{ url_for('core.logout') }}">Logout</a>
+                    {% else %}
+                        <a class="inactive {{'active' if active_page == 'register'}}" href="{{ url_for('core.register') }}">Register</a>
+                        <a class="inactive {{'active' if active_page == 'login'}}" href="{{ url_for('core.login') }}">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
     </div>
+    <div class = "foot">
+        <footer>
+            <p class="text-center">Copyright &copy; photography471.com</p>
+        </footer>
+    </div>
+</div>
 </body>

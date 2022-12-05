@@ -1,0 +1,71 @@
+{% extends "base.html.jinja" %}
+
+
+{% block title %}Edit Gallery{% endblock %}
+{%set active_page = 'edit_gallery'%}
+{% block content %}
+
+<div style="display:center" class="edit-gallery-container">
+    <section class="edit-gallery">
+    <br>
+    <br>
+    <h1 id="contactHead">Edit your page:</h1>
+
+    <div class="main-block">
+
+        <form action="{{ url_for('core.edit_about', email=photographer.email) }}" method="post">
+            <h2 id="contactHead" style="font-size:28px">Edit About Section</h2>
+            <textarea style="float:left; margin-top:10px" name="text" rows="5" cols="5" id="text" required></textarea>
+            <div class="subButtonPos">
+                <input class = "subButton" style = "width:15%; padding:6px; margin-top: 20px"type="submit" value="Submit">
+            </div>
+        </form>
+
+       <form action="{{ url_for('core.add_album', email=photographer.email) }}" method="post">
+            <h2 id="contactHead" style="font-size:28px">Add An Album</h2>
+            <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="album_name">Album Name:&nbsp;</label>
+            <input style="float:left;  margin-top:10px" size="20" maxlength="20" type="text" name="album_name" id="album_name" required>
+            <br>  
+
+            <label style="float:left; margin-top:15px; margin-bottom:15px" for="album_type">Select Album Type:</label> 
+            <div style="display:flex; width:35%; margin-top:15px; margin-bottom:15px">
+                <span style="padding-left:50%"></span>
+                <input style="display:inline-block;" type="radio" name="album_type" id="portfolio" value="portfolio">
+                    <p>Portfolio</p>
+                </input>
+                <span style="padding-left:55%"></span>
+                <input style="display:inline-block;" type="radio" name="album_type" id="client" value="client">
+                    <p>Client</p>
+                </input>
+                <br>
+            </div>
+
+            <label style="float:left; margin-top:15px; margin-bottom:15px" for="release_type">Select Release Type:</label> 
+            <div style="display:flex; width:35%; margin-top:15px; margin-bottom:15px">
+                <span style="padding-left:50%"></span>
+                <input style="display:inline-block;" type="radio" name="release_type" id="public" value="public">
+                    <p>Public</p>
+                </input>
+                <span style="padding-left:55%"></span>
+                <input style="display:block;" type="radio" name="release_type" id="private" value="private">
+                    <p>Private</p>
+                </input>
+                <br>
+            </div>
+        
+            <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="client_email">Client Email: (Enter for client album type) </label>
+            <input style="float:left;  margin-top:10px" type="client_email" name="client_email" id="client_email">
+            <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="photos">Photo Pathnames: (Separated by commas; ie: "photo1.jpg,photo2.jpg,photo3.jpg")</label>
+            <textarea style="float:left; margin-top:10px" name="photos" rows="5" cols="5" id="photos" required></textarea>
+            <div class="subButtonPos">
+                <input class = "subButton" style = "width:15%; padding:6px; margin-top: 20px"type="submit" value="Submit">
+            </div>
+        </form>
+
+
+    </div>
+</section>
+</div>
+{% endblock %}
+
+

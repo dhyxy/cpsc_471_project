@@ -22,6 +22,7 @@ CREATE TABLE user (
     password TEXT NOT NULL,
     name TEXT NOT NULL,
     phone_number TEXT NOT NULL,
+    about TEXT,
     type TEXT NOT NULL REFERENCES user_type (user_type) ON DELETE CASCADE
 );
 
@@ -35,8 +36,8 @@ CREATE TABLE photographer_available_time (
 
 CREATE TABLE album (
     name TEXT PRIMARY KEY NOT NULL,
-    type TEXT NOT NULL,
     release_type TEXT NOT NULL,
+    client_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE,
     photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
  );
 
@@ -55,6 +56,7 @@ CREATE TABLE package (
 
 CREATE TABLE appointment (
     id INTEGER PRIMARY KEY NOT NULL,
+    confirmed BOOLEAN NOT NULL,
     time_id INTEGER NOT NULL REFERENCES photographer_available_time (id) ON DELETE CASCADE,
     package_id INTEGER NOT NULL REFERENCES package (id) ON DELETE CASCADE,
     photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE,
@@ -72,6 +74,7 @@ CREATE TABLE invoice (
 CREATE TABLE form (
     id INTEGER PRIMARY KEY NOT NULL,
     message TEXT NOT NULL,
+    client_name TEXT NOT NULL REFERENCES user (name) ON DELETE CASCADE,
     client_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE,
     photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
 );

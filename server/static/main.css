@@ -1,0 +1,336 @@
+body {
+  height: 100vh;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0;
+  overflow-x: hidden;
+}
+
+.header {
+  overflow: hidden;
+  background-color: rgba(250, 165, 225, 0.6);
+  border-bottom: 1px solid black;
+  font-size: 12px;
+}
+
+/* Style the header links */
+.header a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 15px;
+  text-decoration: wavy;
+  font-size: 16px;
+  line-height: 25px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+
+/* Style the header links */
+.header img {
+  float: left;
+}
+
+/* Style the header text */
+.header h1 {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 15px;
+  text-decoration: wavy;
+  font-size: 25px;
+  line-height: 25px;
+  border-radius: 4px;
+  margin-left: 15px;
+  margin-top: 6px;
+}
+
+/* Style the logo link (notice that we set the same value of line-height and font-size to prevent the header to increase when the font gets bigger */
+
+.log {
+  height: 75px;
+  width: 75px;
+  margin-left: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: rgb(255, 255, 255, 0.9);
+  border: 2px solid black;
+  border-radius: 4px;
+}
+/* Change the background color on mouse-over */
+.header a:hover {
+  background-color: rgb(77, 157, 232);
+  color: black;
+}
+
+/* Style the active/current link*/
+.header a.active {
+  background-color: rgb(77, 157, 232);
+  color: white;
+  border: 1px solid black;
+}
+
+/* Float the link section to the right */
+.header-right {
+  float: right;
+}
+
+.text-center {
+  font-size: 13px;
+  position: absolute;
+  margin-bottom: 0;
+  width: 100%;
+  max-width: 1950px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 23px;
+  padding-top: 5px;
+  border-top: 1px solid black;
+  text-align: center;
+  background-color: rgba(250, 165, 225, 0.6);
+}
+
+.allButFooter {
+  min-height: calc(100vh - 40px);
+}
+
+.foot {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+footer {
+  min-height: 50px;
+  overflow: hidden;
+}
+
+/*here is where the specific CSS begins!*/
+
+.home-container {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
+  word-wrap: break-word;
+  text-align: center;
+  width: 655px;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 2;
+}
+.wrapper {
+  /*this is so even after resizing, everything stays in place*/
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1950px;
+  min-width: 1200px;
+}
+.mainPageImages {
+  display: flex;
+  justify-content: center;
+}
+.homeImg {
+  height: 400px;
+  width: auto;
+  vertical-align: middle;
+  padding: 6px;
+}
+
+.positionForm {
+  padding: 0px;
+  margin: 0;
+  min-height: 100%;
+}
+#contactHead {
+  font-weight: 400;
+  color: #000000;
+  margin: 0 0 20px;
+  text-align: center;
+  text-decoration: underline;
+  font-size: 35px;
+}
+.edit-gallery-container a{ 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 20px;
+  margin-top: 30px;
+}
+.main-block {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  align-items: center;
+  min-height: 100vh;
+}
+.content {
+  margin: 10px;
+}
+.list_photographer a {
+  border: 1px solid black;
+  display: block;
+  padding: 15px;
+  margin: 25px;
+  box-shadow: 0 2px 5px #f5f5f5;
+  background: #ecc7c7;
+  border-radius: 15px;
+  color: black;
+  text-decoration: none;
+  font-size: 25px;
+  text-align: center;
+  width: 50%;
+}
+.gallery-container {
+  margin: 10px;
+}
+.gallery-container a {
+  font-size: 20px;
+  color: blue;
+  padding-right: 10px;
+}
+.photos-container img {
+  max-height: 300px;
+  max-width: 300px;
+  padding-right: 6px;
+}
+
+form {
+  border: 1px solid black;
+  display: block;
+  padding: 25px;
+  margin: 25px;
+  box-shadow: 0 2px 5px #f5f5f5;
+  background: #ecc7c7;
+  border-radius: 15px;
+  text-align: center;
+  width: 50%;
+}
+input,
+textarea {
+  width: calc(100% - 18px);
+  padding: 3px;
+  margin-bottom: 10px;
+  border: 1px solid #1c87c9;
+  border-radius: 10px;
+  outline: none;
+  color: #1c87c9;
+}
+input::placeholder {
+  color: #666;
+}
+.subButtonPos {
+  text-align: center;
+}
+.subButton {
+  width: 60%;
+  padding: 10px;
+  border: 1px solid black;
+  background: #1c87c9;
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+  border-radius: 10px;
+  text-align: center;
+}
+.subButton:hover {
+  background: #2371a0;
+}
+.apptText {
+  text-align: center;
+  text-decoration: none;
+}
+
+.appointments-list {
+  margin: 15px;
+  min-height: 100vh;
+}
+
+.available-time {
+  display:inline-block;
+  color: darkred;
+  width: 100%;
+}
+
+.available-times-container {
+  margin: 0px;
+  margin-bottom: 25px;
+  display:inline-block
+}
+
+.appointment-container form {
+  border: none;
+  display: inline-block;
+  padding: 0px;
+  margin: 0px;
+  box-shadow: none;
+  background: none;
+  border-radius: 0px;
+  text-align: center;
+}
+
+.available-times-container form {
+  border: none;
+  display:inline-block;
+  padding: 0px;
+  margin: 0px;
+  box-shadow: none;
+  background: none;
+  border-radius: 0px;
+  text-align: center;
+  width: 300px;
+}
+
+.album-container form {
+  border: none;
+  display: inline-block;
+  padding: 0px;
+  margin: 0px;
+  box-shadow: none;
+  background: none;
+  border-radius: 0px;
+  text-align: center;
+}
+
+.gallery-container form {
+  border: none;
+  display: inline-block;
+  padding: 0px;
+  margin: 0px;
+  box-shadow: none;
+  background: none;
+  border-radius: 0px;
+  text-align: center;
+}
+
+.available-time input[type="radio"] {
+  width: 10px;
+}
+
+.appointment-container {
+  display: inline-block;
+  text-align: center;
+  border: 1px solid #1c87c9;
+  border-radius: 10px;
+  padding: 25px;
+  margin-right: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 5px #4b3535;
+  background: #ecc7c7;
+}
+
+.invoiceEdit {
+  text-align: left;
+  border: 1px solid #1c87c9;
+  border-radius: 10px;
+  padding: 20px;
+  padding-bottom: 40px;
+  margin: 20px;
+  box-shadow: 0 2px 5px #4b3535;
+  background: #ecc7c7;
+}
+.invoiceEdit h2{
+  text-align: center;
+}
+.invoiceHead span {
+  background-color: white;
+  border-radius: 10px;
+}

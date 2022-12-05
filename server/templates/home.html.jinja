@@ -1,43 +1,30 @@
 {% extends 'base.html.jinja' %}
 
 {% block title %} home! {% endblock %}
+{%set active_page = 'home'%}
 
 {% block content %}
-welcome to home!
+<div class = "home-container">
+    <h2 style="letter-spacing:1px; text-decoration:underline">Photography For The Adventurous</h2>
+    <p>_________</p>
+    <div>
+        <p style="line-height: 2.5">
+        Photography 471 is at your service for all your phototaking needs, specializing
+        in the great outdoors. Book us to photograph and memorialize your carefully planned gardens,
+        or capture your most cherished memories such as weddings and birthdays.
+        </p>
+        <br>
+        <p style="font-size:15px"><i>“When words become unclear, I shall focus with photographs.
+         When images become inadequate, I shall be content with silence.”</i></p>
 
-{% if session.get(EMAIL_SESSION_KEY) %}
-    <a href="{{ url_for('core.logout') }}">logout</a>
-    {% if is_photographer %}
-    <a href="{{ url_for('core.profile') }}">profile</a>
-    {% endif %}
-{% else %}
-    <a href="{{ url_for('core.register') }}">register</a>
-    <a href="{{ url_for('core.login') }}">login</a>
-{% endif %}
-
-{% if not is_photographer %}
-<div class="photographers-list">
-    <h3>photographers</h3>
-    {% for photographer in photographers %}
-    <a href="{{ url_for('core.photographer', email=photographer['email']) }}">{{ photographer.name }}</a>
-    {% endfor %}
+        <p style="font-size:12px"><i>Ansel Adams</i></p>
+    </div>
 </div>
-{% endif %}
-<div class="appointments-list">
-    <h3>appointments</h3>
-    {% for appointment in appointments %}
-        <div class="appointment-container">
-            {% if is_photographer %}
-                <h4>{{ appointment['client_email'] }}</h4>
-            {% else %}
-                <h4><a href="{{ url_for('core.photographer', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
-            {% endif %}
-            <p>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</p>
-            <p>${{ appointment['pricing']}}</p>
-            <p>package content: {{ appointment['items'] }}</p>
-            <a href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">get invoice</a>
-        </div>
-    {% endfor %}
+<br>
+<div class = "mainPageImages">
+    <img class="homeImg" src={{url_for('static', filename='flower1.jpg')}}>
+    <img class="homeImg" src={{url_for('static', filename='flower2.jpg')}}>
+    <img class="homeImg" src={{url_for('static', filename='flower3.jpg')}}>
 </div>
 {% if is_photographer %}
 <div class="feedbacks">
