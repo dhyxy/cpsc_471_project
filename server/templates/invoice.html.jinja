@@ -3,7 +3,6 @@
 {% block title %}invoice{% endblock title %}
 
 {% block content %}
-<<<<<<< HEAD
 <div class = "main-block">
     <div class = "invoiceEdit">
         <h2 class="invoiceHead"><span>&nbsp&nbspInvoice&nbsp&nbsp</span></h2>
@@ -16,13 +15,4 @@
         <p>Items Purchased:<b> {{ invoice.cost }}</b></p>
     </div>
 </div>
-=======
-<h2>invoice</h2>
-<p>photographer: {{ photographer.name }} ({{ photographer.email }})</p>
-<p>date: {{ invoice.parsed_date.strftime("%c") }}</p>
-<p>price: ${{ invoice.total_cost }}</p>
-<p>costs: {{ invoice.cost }}</p>
-
-<a href="{{ url_for('core.feedback', invoice_id=invoice.id) }}">write feedback</a>
->>>>>>> e20f576358b1331ca3ef05ba6241cc2db162f74d
 {% endblock content %}
