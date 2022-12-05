@@ -11,7 +11,7 @@
     <h1 style="text-decoration:underline">Appointments Booked</h1>
     <h2> Confirmed appointments: </h2>
 
-    {% set ns = namespace(confirmed_appts = False, completed_appts = False, unconfirmed_appts = "False") %}
+    {% set ns = namespace(confirmed_appts = False, completed_appts = False, unconfirmed_appts = False) %}
 
     {% for appointment in appointments %}
         {% if appointment.completed %}
@@ -48,14 +48,11 @@
         No appointments have been confirmed at this time.
     {% endif %}
 
-    {% set n = namespace(unconfirmed_appts = "False") %}
-
-
     <h2> Waiting for confirmation: </h2>
 
     {% for appointment in appointments %}
         {% if not appointment.confirmed and not appointment.completed %}
-            {% set n.unconfirmed_appts = "True" %}
+            {% set ns.unconfirmed_appts = True %}
             <div class="appointment-container">
                 {% if is_photographer %}
                     <h4>Client's Email: {{ appointment['client_email'] }}</h4>
@@ -78,7 +75,7 @@
         {% endif %}
     {% endfor %}
 
-    {% if not n.unconfirmed_appts %}
+    {% if not ns.unconfirmed_appts %}
         No appointments are waiting for confirmation.
         {% if not is_photographer %}
             <a href="{{ url_for('core.photographers', next="book") }}">Set up an appointment here!</a>
