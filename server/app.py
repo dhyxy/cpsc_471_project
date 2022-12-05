@@ -293,23 +293,6 @@ def delete_appt(appointment_id: int):
     db.Appointment.delete(appointment_id)
     return redirect(url_for('core.appt', user_type=user_type))
 
-
-@login_required
-@core.route('/contact/<photographer_email>', methods=('GET', 'POST',))
-def contact(photographer_email: str):
-    user: db.User = g.user
-    if not user or user.type is not db.UserType.CLIENT:
-        flash("You must be a logged in client to contact this photographer")
-        return redirect(url_for('.home'))
-
-    if request.method == 'POST':
-        message = request.form['message']
-        db.ContactForm.create(message, user.email, photographer_email)
-        return redirect(url_for('.photographer', email=photographer_email))
-
-    photographer = db.User.read(photographer_email)
-    return render_template('contact.html.jinja', photographer=photographer)
-
 @login_required
 @core.route('/invoice/<int:appointment_id>')
 def invoice(appointment_id: int):

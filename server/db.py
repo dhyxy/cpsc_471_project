@@ -102,11 +102,12 @@ class User:
         db.commit()
         return User(email, password, name, phone_number, about, type)
 
-    def create_client(email: str, password: str, name: str, phone_number: str, type: UserType) -> User:
+    def create_client(email: str, password: str, name: str, phone_number: str) -> User:
         db = get_db()
-        db.execute(User.CREATE_C, (email, password, name, phone_number, type.value))
+        utype = UserType.CLIENT
+        db.execute(User.CREATE_C, (email, password, name, phone_number, UserType.CLIENT))
         db.commit()
-        return User(email, password, name, phone_number, type)
+        return User(email, password, name, phone_number, utype)
 
     @staticmethod 
     def read(email: str) -> User:
@@ -388,7 +389,7 @@ class ContactForm:
     @staticmethod
     def read(photographer_email: str) -> list[ContactForm]:
         db = get_db()
-        data = db.execute(ContactForm._READ, (photographer_email,))
+        data = db.execute(ContactForm.READ, (photographer_email,))
         forms = [ContactForm(**row) for row in data]
         return forms
 
