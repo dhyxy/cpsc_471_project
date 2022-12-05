@@ -57,6 +57,7 @@ CREATE TABLE package (
 CREATE TABLE appointment (
     id INTEGER PRIMARY KEY NOT NULL,
     confirmed BOOLEAN NOT NULL,
+    completed BOOLEAN NOT NULL,
     time_id INTEGER NOT NULL REFERENCES photographer_available_time (id) ON DELETE CASCADE,
     package_id INTEGER NOT NULL REFERENCES package (id) ON DELETE CASCADE,
     photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE,

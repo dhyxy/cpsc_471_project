@@ -12,7 +12,7 @@
     {% set ns = namespace(confirmed_appts = "none") %}
 
     {% for appointment in appointments %}
-        {% if appointment.confirmed == True %}
+        {% if appointment.confirmed == True and appointment.completed == False %}
             {% set ns.confirmed_appts = "non empty" %}
             <div class="appointment-container">
                 {% if is_photographer %}
@@ -26,6 +26,12 @@
                 <br>
                 <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
                 <br>
+                <br>
+                {% if is_photographer %}
+                    <form action="{{ url_for('core.complete_appt', appointment_id=appointment.id) }}" method="post">
+                        <input style="width:100px; padding:5px; text-decoration:none" class = "subButton" type="submit" value="Completed">
+                    </form>
+                {% endif %}
                 <br>
                 <form action="{{ url_for('core.delete_appt', appointment_id=appointment.id) }}" method="post">
                     <input style="padding:5px; text-decoration:none" class = "subButton" type="submit" value="Cancel">
@@ -41,7 +47,7 @@
 
     {% set ns = namespace(unconfirmed_appts = "none") %}
     {% for appointment in appointments %}
-        {% if appointment.confirmed == False %}
+        {% if appointment.confirmed == False and appointment.completed == False %}
             {% set ns.unconfirmed_appts = "non empty" %}
             <div class="appointment-container">
                 {% if is_photographer %}
@@ -71,6 +77,40 @@
             <a href="{{ url_for('core.photographers', next="book") }}">Set up an appointment here!</a>
         {% endif %}
     {% endif %}
+
+    <h2> Completed appointments: </h2>
+
+    {% set ns = namespace(confirmed_appts = "none") %}
+
+    {% for appointment in appointments %}
+        {% if appointment.completed == True %}
+            {% set ns.confirmed_appts = "non empty" %}
+            <div class="appointment-container">
+                {% if is_photographer %}
+                    <h4>Client's Email: {{ appointment['client_email'] }}</h4>
+                {% else %}
+                    <h4>Photographer's Email: <a href="{{ url_for('core.gallery', email=appointment['photographer_email']) }}">{{ appointment['photographer_email'] }}</a></h4>
+                {% endif %}
+                <p style="font-size:13px"><b>Date and time of appointment:<br>{{ appointment['start_time'].strftime("%c") }} - {{ appointment['end_time'].strftime("%c")}}</b></p>
+                <p>Total Cost: <b>${{ appointment['pricing']}}</b></p>
+                <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
+                <br>
+                <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
+                <br>
+                <br>
+                {% if user_type=="client" %}
+                    <form action="{{ url_for('core.confirm_appt', appointment_id=appointment.id) }}" method="post">
+                        <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Feedback</a>
+                    </form>
+                {% endif %}
+                <br>
+                <br>
+                <form action="{{ url_for('core.delete_appt', appointment_id=appointment.id) }}" method="post">
+                    <input style="padding:5px; text-decoration:none" class = "subButton" type="submit" value="Cancel">
+                </form>
+            </div>
+        {% endif %}
+    {% endfor %}
 
 </div>
 {% endblock %}
