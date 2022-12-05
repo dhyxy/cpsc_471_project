@@ -201,14 +201,14 @@ def manage():
     
     available_times = db.PhotographerAvailableTime.read_all(user.email, False)
     contact_forms = db.ContactForm.read(user.email)
-    feedbacks = db.FeedbackForm.read_all(photographer_email=user.email)
+    feedbacks = db.FeedbackForm.read_all(user.email)
+    print(feedbacks)
     return render_template(
         'manage.html.jinja', 
         user=user, 
         user_type=user_type,
         available_times=available_times, 
-        contact_forms=contact_forms,
-        feedbacks=feedbacks
+        contact_forms=contact_forms
     )
     
 @login_required
@@ -335,12 +335,8 @@ def invoice(appointment_id: int):
 def feedback(appt_id: int):
     user: db.User = g.user
     if not user or user.type is not db.UserType.CLIENT:
+        print("not client")
         flash("You must be a logged in client to leave feedback")
-        return redirect(url_for('.home'))
-
-    invoice = db.Invoice.read(appt_id)
-    if not invoice:
-        flash('error retrieving data, contact admin')
         return redirect(url_for('.home'))
 
     feedback_exists = db.FeedbackForm.exists(appt_id)
@@ -349,7 +345,8 @@ def feedback(appt_id: int):
         appointment = db.Appointment.read(appt_id)
         client = db.User.read(appointment.client_email)
         message = request.form['message']
-        db.FeedbackForm.create(message, appointment.client_email, client.name, appointment.photographer_email, appt_id)
+        f=db.FeedbackForm.create(message, appointment.client_email, client.name, appointment.photographer_email, appt_id)
+        print(f)
         return redirect(url_for('.home', appointment_id=appointment.id))
 
     return render_template('feedback.html.jinja', invoice=invoice, feedback_exists=feedback_exists)
