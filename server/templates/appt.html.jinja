@@ -109,9 +109,7 @@
                             <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.add_client_album', appt_id=appointment.id) }}">Upload Photos</a>
                         </form>
                     {% else %}
-                        <form action="{{ url_for('core.confirm_appt', appointment_id=appointment.id) }}" method="post">
-                            <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Feedback</a>
-                        </form>
+                        <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.feedback', appt_id=appointment.id) }}">Feedback</a>
                     {% endif %}
                     <br>
                     <br>

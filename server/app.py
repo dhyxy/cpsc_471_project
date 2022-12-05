@@ -331,26 +331,26 @@ def invoice(appointment_id: int):
     return render_template('invoice.html.jinja', user_type=user_type, appointment=appointment, invoice=invoice, time=time, client=client, photographer=photographer)
 
 @login_required
-@core.route('/feedback/<int:invoice_id>', methods=('GET', 'POST',))
-def feedback(invoice_id: int):
+@core.route('/feedback/<int:appt_id>', methods=('GET', 'POST',))
+def feedback(appt_id: int):
     user: db.User = g.user
     if not user or user.type is not db.UserType.CLIENT:
         flash("You must be a logged in client to leave feedback")
         return redirect(url_for('.home'))
 
-    invoice = db.Invoice.read(invoice_id)
+    invoice = db.Invoice.read(appt_id)
     if not invoice:
         flash('error retrieving data, contact admin')
         return redirect(url_for('.home'))
 
-    feedback_exists = db.FeedbackForm.exists(invoice.id)
+    feedback_exists = db.FeedbackForm.exists(appt_id)
     
     if not feedback_exists and request.method == 'POST':
-        appointment = db.Appointment.read(invoice.appointment_id)
+        appointment = db.Appointment.read(appt_id)
         client = db.User.read(appointment.client_email)
         message = request.form['message']
-        db.FeedbackForm.create(message, appointment.client_email, client.name, appointment.photographer_email, invoice.id)
-        return redirect(url_for('.invoice', appointment_id=appointment.id))
+        db.FeedbackForm.create(message, appointment.client_email, client.name, appointment.photographer_email, appt_id)
+        return redirect(url_for('.home', appointment_id=appointment.id))
 
     return render_template('feedback.html.jinja', invoice=invoice, feedback_exists=feedback_exists)
 
