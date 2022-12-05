@@ -336,4 +336,26 @@ input::placeholder {
 }
 .contactStuffs {
   border: 1px solid black;
+  display: inline-block;
+  max-width: 500px;
+  word-wrap: break-word;
+  padding-left: 14px;
+  padding-right: 14px;
+  border-radius: 9px;
+  background-color: lightblue;
+  margin: 0px;
+}
+.positionCon {
+  padding: 25px;
+}
+#conP {
+  display: inline;
+  text-decoration: underline;
+  border: 1px solid white;
+  background-color: lavender;
+  padding: 4px;
+  border-radius: 7px;
+}
+#conSpan {
+  color: black;
 }

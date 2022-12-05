@@ -44,11 +44,21 @@
 </div>
 
 <div class="contact-forms">
+    <h3>Inquries from contact form!</h3>
     {% for contact_form in contact_forms %}
-    <div class="contactStuffs">
-        <p>sender: {{contact_form.client_name}}</p>
-        <p>from: {{ contact_form.client_email }}</p>
-        <p>message: {{ contact_form.message }}</p>
+    <div class="positionCon">
+        <div class="contactStuffs">
+            <br>
+            <p id="conP">Sender:</p><span id="conSpan">&nbsp&nbsp{{contact_form.client_name}}</span>
+            <br>
+            <br>
+            <p id="conP">From:</p><span id="conSpan">&nbsp&nbsp{{ contact_form.client_email }}</span>
+            <br>
+            <br>
+            <p id="conP">Message:</p><span id="conSpan">&nbsp&nbsp{{ contact_form.message }}</span>
+            <br>
+            <br>
+        </div>
     </div>
     {% endfor %}
 </div>
@@ -56,8 +66,10 @@
 <div class="feedbacks">
     <h3>feedback you've received!</h3>
     {% for feedback in feedbacks %}
-    <div class="feedback">
-        feedback from {{ feedback.client_email }}: {{ feedback.message }}
+    <div class="positionCon">
+        <div class="contactStuffs">
+            feedback from {{ feedback.client_email }}: {{ feedback.message }}
+        </div>
     </div>
     {% endfor %}
 </div>
