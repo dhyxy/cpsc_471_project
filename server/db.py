@@ -407,10 +407,12 @@ class FeedbackForm(ContactForm):
     id: int
     form_id: int
     invoice_id: int
+    
 
     CREATE = "INSERT INTO feedback_form (form_id, invoice_id) VALUES (?, ?)"
     EXISTS = "SELECT * FROM feedback_form WHERE invoice_id = ?"
-    READ_ALL = "SELECT f.*, c.message, c.client_email,c.client_name, c.photographer_email FROM feedback_form f LEFT JOIN form c ON f.form_id = c.id WHERE c.photographer_email = ?"
+    READ_ALL = "SELECT f.*, c.message, c.client_email, c.photographer_email FROM feedback_form f LEFT JOIN form c ON f.form_id = c.id WHERE c.photographer_email = ?"
+
 
     @staticmethod
     @tries_to_commit
@@ -422,7 +424,7 @@ class FeedbackForm(ContactForm):
         c = db.execute(FeedbackForm.CREATE, (contact_form.id, invoice_id))
         db.commit()
         assert c.lastrowid is not None # TODO
-        return FeedbackForm(c.lastrowid, message, client_email, photographer_email, contact_form.id, invoice_id)
+        return FeedbackForm(c.lastrowid, message, client_email, client_name,photographer_email, contact_form.id, invoice_id)
     
     @staticmethod
     def exists(invoice_id: int) -> bool:
