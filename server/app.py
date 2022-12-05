@@ -15,6 +15,10 @@ loggedIn = 0
 @core.route('/')
 def home():
     global user_type
+    photographers = db.User.list_photographers()
+    is_photographer = False
+    appointments = []
+    feedbacks = None
     if 'user' in g:
         user: db.User = g.get('user')
         if user and user.type is db.UserType.PHOTOGRAPHER:
@@ -40,7 +44,9 @@ def appt():
             user_type = "client"
         print(user_type)
         appointments = fetch_appointments(user.email, is_photographer)
-    return render_template('appt.html.jinja', user_type=user_type, appointments = appointments, photographers=photographers)
+        if is_photographer:
+            feedbacks = db.FeedbackForm.read_all(photographer_email=user.email)
+    return render_template('appt.html.jinja', photographers=photographers, is_photographer=is_photographer, appointments=appointments, feedbacks=feedbacks)
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -133,23 +139,20 @@ def profile():
     if user.type is not db.UserType.PHOTOGRAPHER:
         flash("You don't have sufficient permissions to access this page")
         return redirect(url_for('.home'))
-    
     if request.method == 'POST':
         start = request.form['start']
         end = request.form['end']
         db.PhotographerAvailableTime.create(start, end, user.email)
         return redirect(url_for('.profile')) # reload page after post
-    
     available_times = db.PhotographerAvailableTime.read_all(user.email)
     contact_forms = db.ContactForm.read(user.email)
     return render_template(
         'profile.html.jinja', 
         user=user, 
-        user_type=user_type,
         available_times=available_times, 
         contact_forms=contact_forms
     )
-    
+
 @login_required
 @core.route('/book/<photographer_email>', methods=('GET', 'POST'))
 
@@ -198,6 +201,22 @@ def contact(photographer_email: str):
 
 
 @login_required
+@core.route('/contact/<photographer_email>', methods=('GET', 'POST',))
+def contact(photographer_email: str):
+    user: db.User = g.user
+    if not user or user.type is not db.UserType.CLIENT:
+        flash("You must be a logged in client to contact this photographer")
+        return redirect(url_for('.home'))
+
+    if request.method == 'POST':
+        message = request.form['message']
+        db.ContactForm.create(message, user.email, photographer_email)
+        return redirect(url_for('.photographer', email=photographer_email))
+
+    photographer = db.User.read(photographer_email)
+    return render_template('contact.html.jinja', photographer=photographer)
+
+@login_required
 @core.route('/invoice/<int:appointment_id>')
 def invoice(appointment_id: int):
     global user_type
@@ -208,6 +227,29 @@ def invoice(appointment_id: int):
 
     invoice = db.Invoice.create(datetime.datetime.now(), package.pricing, package.items, appointment.id)
     return render_template('invoice.html.jinja', user_type=user_type, invoice=invoice, time=time, photographer=photographer)
+
+@login_required
+@core.route('/feedback/<int:invoice_id>', methods=('GET', 'POST',))
+def feedback(invoice_id: int):
+    user: db.User = g.user
+    if not user or user.type is not db.UserType.CLIENT:
+        flash("You must be a logged in client to leave feedback")
+        return redirect(url_for('.home'))
+
+    invoice = db.Invoice.read(invoice_id)
+    if not invoice:
+        flash('error retrieving data, contact admin')
+        return redirect(url_for('.home'))
+
+    feedback_exists = db.FeedbackForm.exists(invoice.id)
+    
+    if not feedback_exists and request.method == 'POST':
+        appointment = db.Appointment.read(invoice.appointment_id)
+        message = request.form['message']
+        db.FeedbackForm.create(message, appointment.client_email, appointment.photographer_email, invoice.id)
+        return redirect(url_for('.invoice', appointment_id=appointment.id))
+
+    return render_template('feedback.html.jinja', invoice=invoice, feedback_exists=feedback_exists)
 
 # TODO: this should be a `DELETE` method, written as POST to save time for project
 @core.route("/available-time/delete/<int:id>", methods=('POST',))
