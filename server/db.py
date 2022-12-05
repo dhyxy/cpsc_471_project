@@ -43,12 +43,14 @@ def init_db():
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo@email.com', 'password', 'Anna', '123', 'I love taking pictures! My cat is my everything <3', 'photographer');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo2@email.com', 'password', 'Kyle', '234', '', 'photographer');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, about, type) VALUES ('photo3@email.com', 'password', 'Jane', '234', '', 'photographer');")
-    cursor.execute("INSERT INTO album(name, release_type, client_email, photographer_email) VALUES ('Nature', 'public', 'photo@email.com', 'photo@email.com');")
+    cursor.execute("INSERT INTO album(name, release_type, photographer_email) VALUES ('Nature', 'public', 'photo@email.com');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden1.jpg', 'Nature');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden2.jpg', 'Nature');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden3.jpg', 'Nature');")
     cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo2@email.com');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
+    # cursor.execute("INSERT INTO photographer_available_time(id, start_time, end_time, photographer_email) VALUES ('1', 'datetime.datetime(2022, 12, 1, 3, 9)', 'datetime.datetime(2022, 12, 22, 3, 9)', 'photo@email.com');")
+    # cursor.execute("INSERT INTO appointment(id, confirmed, completed, time_id, package_id, photographer_email, client_email) VALUES ('1','1','1','1',' 1','photo@email.com','client@email.com');")
     cursor.close()
     db.commit()
 
@@ -104,10 +106,10 @@ class User:
 
     def create_client(email: str, password: str, name: str, phone_number: str) -> User:
         db = get_db()
-        utype = UserType.CLIENT
-        db.execute(User.CREATE_C, (email, password, name, phone_number, UserType.CLIENT))
+        type = UserType.CLIENT.value
+        db.execute(User.CREATE_C, (email, password, name, phone_number, type))
         db.commit()
-        return User(email, password, name, phone_number, utype)
+        return User(email, password, name, phone_number, "", type)
 
     @staticmethod 
     def read(email: str) -> User:
@@ -306,12 +308,11 @@ class Invoice:
 class Album:
     name: str
     release_type: str
-    client_email: str
     photographer_email: str
 
     photos: list[Photo] = field(default_factory=list, init=False)
 
-    CREATE = "INSERT OR REPLACE INTO album(name, release_type, client_email, photographer_email) VALUES (?, ?, ?, ?)"
+    CREATE = "INSERT OR REPLACE INTO album(name, release_type, photographer_email) VALUES (?, ?, ?)"
     READ = "SELECT a.* FROM album a LEFT JOIN user ON a.photographer_email = user.email WHERE a.photographer_email = ?"
     READALBUM = "SELECT a.* FROM album a LEFT JOIN user ON a.photographer_email = user.email WHERE a.photographer_email = ? AND a.name = ?"
     DELETE = "DELETE FROM album WHERE photographer_email = ? AND name = ?"
@@ -321,11 +322,11 @@ class Album:
         self.photos = Photo.read(self.name)
 
     @staticmethod 
-    def create(album_name: str, release_type: str, client_email: str, photographer_email: str) -> Album:
+    def create(album_name: str, release_type: str, photographer_email: str) -> Album:
         db = get_db()
-        db.execute(Album.CREATE, (album_name, release_type, client_email, photographer_email))
+        db.execute(Album.CREATE, (album_name, release_type, photographer_email))
         db.commit()
-        return Album(album_name, release_type, client_email, photographer_email)
+        return Album(album_name, release_type, photographer_email)
 
 
     @staticmethod
@@ -348,6 +349,33 @@ class Album:
         db.execute(Photo.DELETE, (album_name, ))
         db.execute(Album.DELETE, (photographer_email , album_name))
         db.commit()
+
+@dataclass
+class ClientAlbum(Album):
+    album_name: str
+    appointment_id: int
+    client_email: str
+
+    CREATE = "INSERT INTO client_album (album_name, appointment_id, client_email) VALUES (?, ?, ?)"
+    READNAME = "SELECT album_name FROM client_album WHERE appointment_id = ?"
+
+    @staticmethod                   
+    @tries_to_commit
+    def create(album_name: str, release_type: str, appointment_id: int, client_email: str, photographer_email: str) -> ClientAlbum:
+        db = get_db()
+        album = db.execute(Album.CREATE, (album_name, release_type, photographer_email))
+        if not album:
+            raise Exception("album could not be created")
+        db.execute(ClientAlbum.CREATE, (album_name, appointment_id, client_email))
+        db.commit()
+        return ClientAlbum(album_name, release_type, photographer_email, album_name, appointment_id, client_email)
+
+    @staticmethod
+    def readname(appt_id: int) -> str:
+        db = get_db()
+        print(appt_id)
+        name = db.execute(ClientAlbum.READNAME, (appt_id))
+        return name
 
 @dataclass
 class Photo:

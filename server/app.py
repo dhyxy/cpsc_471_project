@@ -19,10 +19,11 @@ def home():
 
 @core.route('/appt')
 def appt():
-    photographers = db.User.list_photographers()
-    global user_type, curr_user
-    is_photographer = False
+    global user_type
     appointments = []
+    is_photographer = False
+    if user_type == "photographer":
+        is_photographer = True
     if 'user' in g:
         user: db.User = g.get('user')
         curr_user = user
@@ -31,9 +32,8 @@ def appt():
             is_photographer=True
         if user and user.type is db.UserType.CLIENT:
             user_type = "client"
-        appointments = fetch_appointments(user.email, is_photographer)
-        print(appointments)
-    return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, num_appt = len(appointments) , photographers=photographers)
+    appointments = fetch_appointments(curr_user.email, is_photographer)
+    return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, num_appt = len(appointments))
 
 @core.route('/register', methods=('GET', 'POST'))
 def register():
@@ -44,7 +44,6 @@ def register():
         password = request.form['password']
         name = request.form['name']
         phone_number = request.form['phone_number']
-        user_type =  db.UserType.CLIENT
         
         if not (email and password and name and phone_number):
             err = "All fields must be entered"
@@ -56,7 +55,7 @@ def register():
             # TODO(1): for the project we aren't hashing the password for simplicity
             # if you end up deploying this, hash the passwords on registration
             # and check password on login with hash
-            db.User.create_client(email, password, name, phone_number, user_type)
+            db.User.create_client(email, password, name, phone_number)
             flash("Thank you for registering")
         except IntegrityError:
             flash(f"Email {email} is already registered")
@@ -120,7 +119,6 @@ def gallery(email: str):
     global curr_user, user_type
     photographer = db.User.read(email)
     albums = db.Album.read(email)
-    print(albums)
     return render_template('gallery.html.jinja',user_type=user_type, curr_user=curr_user, photographer=photographer, albums=albums)
 
 @login_required
@@ -140,21 +138,41 @@ def edit_about(email: str):
     return redirect(url_for('core.gallery', user_type=user_type, email=curr_user.email, photographer=curr_user))
 
 @login_required
-@core.route('/add_album/<email>',  methods=('POST',))
-def add_album(email: str):
+@core.route('/add_album/<photographer_email>',  methods=('POST',))
+def add_album(photographer_email: str):
     if request.method == 'POST':
         album_name = request.form['album_name']
         release_type = request.form['release_type']
-        if request.form['album_type'] == "client":
-            client_email = request.form['client_email']
-            db.Album.create(album_name, release_type, client_email, email)
-        else:
-            db.Album.create(album_name, release_type, email, email)
+        db.Album.create(album_name, release_type, photographer_email)
         photos = request.form['photos']
         pathnames = photos.split(",")
         for pathname in pathnames:
             db.Photo.create(pathname, album_name)
     return redirect(url_for('core.gallery', user_type=user_type, email=curr_user.email, photographer=curr_user))
+
+@login_required
+@core.route('/add_client_album/<int:appt_id>', methods=('GET', 'POST'))
+def add_client_album(appt_id: int):
+    appt = db.Appointment.read(appt_id)
+    client_email = appt.client_email
+    if request.method == 'POST':
+        album_name = request.form['album_name']
+        release_type = request.form['release_type']
+        c = db.ClientAlbum.create(album_name, release_type, appt_id, client_email, curr_user.email)
+        print(c)
+        photos = request.form['photos']
+        pathnames = photos.split(",")
+        for pathname in pathnames:
+            db.Photo.create(pathname, album_name)
+        appointments = []
+        is_photographer = False
+        if user_type == "photographer":
+            is_photographer = True
+        appointments = fetch_appointments(curr_user.email, is_photographer)
+        clientalbums = db.ClientAlbum.readname(appt_id)
+        print(clientalbums)
+        return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, num_appt = len(appointments))
+    return render_template('add_client_album.html.jinja', user_type=user_type, curr_user=curr_user, photographer_email=curr_user.email, client_email=client_email, appt_id=appt_id)
 
 
 @login_required
