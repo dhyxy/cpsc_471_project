@@ -212,26 +212,28 @@ class Package:
 class Appointment:
     id: int
     confirmed: bool
+    completed: bool
     time_id: int
     package_id: int
     photographer_email: str
     client_email: str
 
-    CREATE = "INSERT INTO appointment (time_id, confirmed, package_id, photographer_email, client_email) VALUES (?, ?, ?, ?, ?)"
+    CREATE = "INSERT INTO appointment (time_id, confirmed, completed, package_id, photographer_email, client_email) VALUES (?, ?, ?, ?, ?, ?)"
     READ_CLIENT = "SELECT * FROM appointment WHERE client_email = ?"
     READ_PHOTOGRAPHER = "SELECT * FROM appointment WHERE photographer_email = ?"
     CONFIRM = "UPDATE appointment SET confirmed = True WHERE id = ?"
+    COMPLETE = "UPDATE appointment SET completed = True WHERE id = ?"
     READ = "SELECT * FROM appointment WHERE id = ?"
     DELETE = "DELETE FROM appointment WHERE id = ?"
 
     @staticmethod
     @tries_to_commit
-    def create(time_id: int, confirmed: bool, package_id: int, photographer_email: str, client_email: str) -> Appointment:
+    def create(time_id: int, confirmed: bool,  completed: bool, package_id: int, photographer_email: str, client_email: str) -> Appointment:
         db = get_db()
-        c = db.execute(Appointment.CREATE, (time_id, confirmed, package_id, photographer_email, client_email))
+        c = db.execute(Appointment.CREATE, (time_id, confirmed, completed, package_id, photographer_email, client_email))
         db.commit()
         assert c.lastrowid is not None # TODO unstable, fix if deployed
-        return Appointment(c.lastrowid, time_id, confirmed, package_id, photographer_email, client_email)
+        return Appointment(c.lastrowid, time_id, confirmed, completed, package_id, photographer_email, client_email)
 
     @staticmethod
     def read_all(email: str, is_client = True) -> list[Appointment]:
@@ -251,6 +253,13 @@ class Appointment:
         db = get_db()
         db.execute(Appointment.CONFIRM, (appointment_id,))
         db.commit()
+
+    @staticmethod
+    def complete(appointment_id: int) -> Appointment:
+        db = get_db()
+        db.execute(Appointment.COMPLETE, (appointment_id,))
+        db.commit()
+
 
     @staticmethod
     def delete(appointment_id: int) -> Appointment:

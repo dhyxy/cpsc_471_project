@@ -23,7 +23,6 @@ def appt():
     global user_type, curr_user
     is_photographer = False
     appointments = []
-    feedbacks = None
     if 'user' in g:
         user: db.User = g.get('user')
         curr_user = user
@@ -32,8 +31,8 @@ def appt():
             is_photographer=True
         if user and user.type is db.UserType.CLIENT:
             user_type = "client"
-        print(user_type)
         appointments = fetch_appointments(user.email, is_photographer)
+        print(appointments)
     return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, num_appt = len(appointments) , photographers=photographers)
 
 @core.route('/register', methods=('GET', 'POST'))
@@ -239,6 +238,7 @@ def book(photographer_email: str):
         time_id = int(request.form['time_id'])
         package_id = int(request.form['package_id'])
         confirmed = False
+        completed = False
 
         if not (time_id and package_id):
             err = "All fields must be entered"
@@ -246,7 +246,7 @@ def book(photographer_email: str):
         if err:
             return render_register_template(error=err)
 
-        db.Appointment.create(time_id, confirmed, package_id, photographer_email, user.email)
+        db.Appointment.create(time_id, confirmed, completed, package_id, photographer_email, user.email)
         flash("Thank you for your booking!")
         return redirect(url_for('core.gallery', curr_user=curr_user, email=photographer_email))
 
@@ -285,6 +285,12 @@ def contact(photographer_email: str):
 @core.route("/confirm_appt/<int:appointment_id>", methods=('POST',)) 
 def confirm_appt(appointment_id: int): 
     db.Appointment.confirm(appointment_id)
+    return redirect(url_for('core.appt', user_type=user_type, ))
+
+@login_required
+@core.route("/complete_appt/<int:appointment_id>", methods=('POST',)) 
+def complete_appt(appointment_id: int): 
+    db.Appointment.complete(appointment_id)
     return redirect(url_for('core.appt', user_type=user_type, ))
 
 @login_required
