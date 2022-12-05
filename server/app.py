@@ -22,7 +22,8 @@ def appt():
     photographers = db.User.list_photographers()
     global user_type, curr_user
     is_photographer = False
-    appointments = [];
+    appointments = []
+    feedbacks = None
     if 'user' in g:
         user: db.User = g.get('user')
         curr_user = user
@@ -183,12 +184,14 @@ def manage():
     
     available_times = db.PhotographerAvailableTime.read_all(user.email, False)
     contact_forms = db.ContactForm.read(user.email)
+    feedbacks = db.FeedbackForm.read_all(photographer_email=user.email)
     return render_template(
         'manage.html.jinja', 
         user=user, 
         user_type=user_type,
         available_times=available_times, 
-        contact_forms=contact_forms
+        contact_forms=contact_forms,
+        feedbacks=feedbacks
     )
     
 @login_required
@@ -292,6 +295,22 @@ def delete_appt(appointment_id: int):
 
 
 @login_required
+@core.route('/contact/<photographer_email>', methods=('GET', 'POST',))
+def contact(photographer_email: str):
+    user: db.User = g.user
+    if not user or user.type is not db.UserType.CLIENT:
+        flash("You must be a logged in client to contact this photographer")
+        return redirect(url_for('.home'))
+
+    if request.method == 'POST':
+        message = request.form['message']
+        db.ContactForm.create(message, user.email, photographer_email)
+        return redirect(url_for('.photographer', email=photographer_email))
+
+    photographer = db.User.read(photographer_email)
+    return render_template('contact.html.jinja', photographer=photographer)
+
+@login_required
 @core.route('/invoice/<int:appointment_id>')
 def invoice(appointment_id: int):
     global user_type
@@ -303,6 +322,29 @@ def invoice(appointment_id: int):
 
     invoice = db.Invoice.create(datetime.datetime.now(), package.pricing, package.items, appointment.id)
     return render_template('invoice.html.jinja', user_type=user_type, appointment=appointment, invoice=invoice, time=time, client=client, photographer=photographer)
+
+@login_required
+@core.route('/feedback/<int:invoice_id>', methods=('GET', 'POST',))
+def feedback(invoice_id: int):
+    user: db.User = g.user
+    if not user or user.type is not db.UserType.CLIENT:
+        flash("You must be a logged in client to leave feedback")
+        return redirect(url_for('.home'))
+
+    invoice = db.Invoice.read(invoice_id)
+    if not invoice:
+        flash('error retrieving data, contact admin')
+        return redirect(url_for('.home'))
+
+    feedback_exists = db.FeedbackForm.exists(invoice.id)
+    
+    if not feedback_exists and request.method == 'POST':
+        appointment = db.Appointment.read(invoice.appointment_id)
+        message = request.form['message']
+        db.FeedbackForm.create(message, appointment.client_email, appointment.photographer_email, invoice.id)
+        return redirect(url_for('.invoice', appointment_id=appointment.id))
+
+    return render_template('feedback.html.jinja', invoice=invoice, feedback_exists=feedback_exists)
 
 # TODO: this should be a `DELETE` method, written as POST to save time for project
 @core.route("/available-time/delete/<int:id>", methods=('POST',))

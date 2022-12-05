@@ -388,6 +388,40 @@ class ContactForm:
     @staticmethod
     def read(photographer_email: str) -> list[ContactForm]:
         db = get_db()
-        data = db.execute(ContactForm.READ, (photographer_email,))
+        data = db.execute(ContactForm._READ, (photographer_email,))
         forms = [ContactForm(**row) for row in data]
         return forms
+
+@dataclass
+class FeedbackForm(ContactForm):
+    id: int
+    form_id: int
+    invoice_id: int
+
+    CREATE = "INSERT INTO feedback_form (form_id, invoice_id) VALUES (?, ?)"
+    EXISTS = "SELECT * FROM feedback_form WHERE invoice_id = ?"
+    READ_ALL = "SELECT f.*, c.message, c.client_email, c.photographer_email FROM feedback_form f LEFT JOIN form c ON f.form_id = c.id WHERE c.photographer_email = ?"
+
+    @staticmethod
+    @tries_to_commit
+    def create(message: str, client_email: str, photographer_email: str, invoice_id: int) -> FeedbackForm:
+        db = get_db()
+        contact_form = ContactForm.create(message, client_email, photographer_email)
+        if not contact_form:
+            raise Exception("contact form could not be created")
+        c = db.execute(FeedbackForm.CREATE, (contact_form.id, invoice_id))
+        db.commit()
+        assert c.lastrowid is not None # TODO
+        return FeedbackForm(c.lastrowid, message, client_email, photographer_email, contact_form.id, invoice_id)
+    
+    @staticmethod
+    def exists(invoice_id: int) -> bool:
+        db = get_db()
+        feedback_form = db.execute(FeedbackForm.EXISTS, (invoice_id,)).fetchone()
+        return bool(feedback_form)
+    
+    @staticmethod
+    def read_all(photographer_email: str) -> list[FeedbackForm]:
+        db = get_db()
+        res = db.execute(FeedbackForm.READ_ALL, (photographer_email,)).fetchall()
+        return [FeedbackForm(**row) for row in res]
