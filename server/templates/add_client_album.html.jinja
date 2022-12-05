@@ -9,19 +9,12 @@
     <section class="edit-gallery">
     <br>
     <br>
-    <h1 id="contactHead">Edit your page:</h1>
+    <h1 id="contactHead">Add client album:</h1>
 
     <div class="main-block">
 
-        <form action="{{ url_for('core.edit_about', email=photographer.email) }}" method="post">
-            <h2 id="contactHead" style="font-size:28px">Edit About Section</h2>
-            <textarea style="float:left; margin-top:10px" name="text" rows="5" cols="5" id="text" required></textarea>
-            <div class="subButtonPos">
-                <input class = "subButton" style = "width:15%; padding:6px; margin-top: 20px"type="submit" value="Submit">
-            </div>
-        </form>
+       <form method="post">
 
-       <form action="{{ url_for('core.add_album', photographer_email=photographer.email, client_email=photographer.email, appt_id=0) }}" method="post">
             <h2 id="contactHead" style="font-size:28px">Add An Album</h2>
             <label style="text-align:right; clear: both; float:left; margin-right:15px;" for="album_name">Album Name:&nbsp;</label>
             <input style="float:left;  margin-top:10px" size="20" maxlength="20" type="text" name="album_name" id="album_name" required>
@@ -47,10 +40,7 @@
             </div>
         </form>
 
-
     </div>
 </section>
 </div>
 {% endblock %}
-
-

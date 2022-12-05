@@ -52,4 +52,13 @@
     </div>
     {% endfor %}
 </div>
+
+<div class="feedbacks">
+    <h3>feedback you've received!</h3>
+    {% for feedback in feedbacks %}
+    <div class="feedback">
+        feedback from {{ feedback.client_email }}: {{ feedback.message }}
+    </div>
+    {% endfor %}
+</div>
 {% endblock content %}
