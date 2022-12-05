@@ -148,7 +148,7 @@ footer {
   text-decoration: underline;
   font-size: 35px;
 }
-.edit-gallery-container a{ 
+.edit-gallery-container a {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -245,7 +245,7 @@ input::placeholder {
 }
 
 .available-time {
-  display:inline-block;
+  display: inline-block;
   color: darkred;
   width: 100%;
 }
@@ -253,7 +253,7 @@ input::placeholder {
 .available-times-container {
   margin: 0px;
   margin-bottom: 25px;
-  display:inline-block
+  display: inline-block;
 }
 
 .appointment-container form {
@@ -269,7 +269,7 @@ input::placeholder {
 
 .available-times-container form {
   border: none;
-  display:inline-block;
+  display: inline-block;
   padding: 0px;
   margin: 0px;
   box-shadow: none;
@@ -327,10 +327,13 @@ input::placeholder {
   box-shadow: 0 2px 5px #4b3535;
   background: #ecc7c7;
 }
-.invoiceEdit h2{
+.invoiceEdit h2 {
   text-align: center;
 }
 .invoiceHead span {
   background-color: white;
   border-radius: 10px;
+}
+.contactStuffs {
+  border: 1px solid black;
 }
