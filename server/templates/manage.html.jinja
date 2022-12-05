@@ -45,21 +45,20 @@
 
 <div class="contact-forms">
     <h3>Inquries from contact form!</h3>
-    {% for contact_form in contact_forms %}
-    <div class="positionCon">
-        <div class="contactStuffs">
-            <br>
-            <p id="conP">Sender:</p><span id="conSpan">&nbsp&nbsp{{contact_form.client_name}}</span>
-            <br>
-            <br>
-            <p id="conP">From:</p><span id="conSpan">&nbsp&nbsp{{ contact_form.client_email }}</span>
-            <br>
-            <br>
-            <p id="conP">Message:</p><span id="conSpan">&nbsp&nbsp{{ contact_form.message }}</span>
-            <br>
-            <br>
-        </div>
-    </div>
+    {% for contact_form in contact_forms%}
+            <div class="positionCon">
+                <div class="contactStuffs">
+                    <br>
+                    <p id="conP">Sender:</p><span id="conSpan">&nbsp&nbsp{{contact_form.client_name}}</span></p>
+                    <br>
+                    <br>
+                    <p id="conP">From:</p><span id="conSpan">&nbsp&nbsp{{ contact_form.client_email }}</span></p>
+                    <br>
+                    <br>
+                    <p id="conP">Message:</p><span id="conSpan">&nbsp&nbsp{{ contact_form.message }}</span></p>
+                    <br>
+                </div>
+            </div>
     {% endfor %}
 </div>
 
@@ -68,7 +67,13 @@
     {% for feedback in feedbacks %}
     <div class="positionCon">
         <div class="contactStuffs">
-            feedback from {{ feedback.client_email }}: {{ feedback.message }}
+            <br>
+           <p id="conP"> sender email:</p> <span id="conSpan">&nbsp&nbsp{{ feedback.client_email }}</span>
+           <br>
+           <br>
+           <p id="conP"> feedback:</p> <span id="conSpan">&nbsp&nbsp{{ feedback.message }}</span>
+           <br>
+           <br>
         </div>
     </div>
     {% endfor %}

@@ -202,13 +202,16 @@ def manage():
     available_times = db.PhotographerAvailableTime.read_all(user.email, False)
     contact_forms = db.ContactForm.read(user.email)
     feedbacks = db.FeedbackForm.read_all(user.email)
+    feedback_form_ids = {feedback.form_id for feedback in feedbacks}
+    contact_forms = [form for form in contact_forms if form.id not in feedback_form_ids]
     print(feedbacks)
     return render_template(
         'manage.html.jinja', 
         user=user, 
         user_type=user_type,
         available_times=available_times, 
-        contact_forms=contact_forms
+        contact_forms=contact_forms,
+        feedbacks=feedbacks
     )
     
 @login_required

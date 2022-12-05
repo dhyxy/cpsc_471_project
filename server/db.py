@@ -438,7 +438,7 @@ class FeedbackForm(ContactForm):
 
     CREATE = "INSERT INTO feedback_form (form_id, appointment_id) VALUES (?, ?)"
     EXISTS = "SELECT * FROM feedback_form WHERE appointment_id = ?"
-    READ_ALL = "SELECT f.*, c.message, c.client_email, c.photographer_email FROM feedback_form f LEFT JOIN form c ON f.form_id = c.id WHERE c.photographer_email = ?"
+    READ_ALL = "SELECT f.*, c.message, c.client_email, c.client_name, c.photographer_email FROM feedback_form f LEFT JOIN form c ON f.form_id = c.id WHERE c.photographer_email = ?"
 
 
     @staticmethod
