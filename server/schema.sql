@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS invoice;
 DROP TABLE IF EXISTS appointment;
 DROP TABLE IF EXISTS package;
 DROP TABLE IF EXISTS photo;
+DROP TABLE IF EXISTS client_album;
 DROP TABLE IF EXISTS album;
 DROP TABLE IF EXISTS photographer_available_time;
 DROP TABLE IF EXISTS user_type;
@@ -37,15 +38,20 @@ CREATE TABLE photographer_available_time (
 CREATE TABLE album (
     name TEXT PRIMARY KEY NOT NULL,
     release_type TEXT NOT NULL,
-    client_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE,
     photographer_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
- );
+);
 
- CREATE TABLE photo (
+CREATE TABLE client_album (
+    album_name TEXT PRIMARY KEY NOT NULL REFERENCES album (name) ON DELETE CASCADE,
+    appointment_id INTEGER NOT NULL REFERENCES appointment (id) ON DELETE CASCADE,
+    client_email TEXT NOT NULL REFERENCES user (email) ON DELETE CASCADE
+);
+
+CREATE TABLE photo (
     id INTEGER PRIMARY KEY NOT NULL,
     pathname TEXT NOT NULL,
     album_name TEXT NOT NULL REFERENCES album (name) ON DELETE CASCADE
- );
+);
 
 CREATE TABLE package (
     id INTEGER PRIMARY KEY NOT NULL,
