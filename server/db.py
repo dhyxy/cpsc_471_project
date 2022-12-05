@@ -47,7 +47,7 @@ def init_db():
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden1.jpg', 'Nature');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden2.jpg', 'Nature');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden3.jpg', 'Nature');")
-    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo@email.com');")
+    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo2@email.com');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
     # cursor.execute("INSERT INTO photographer_available_time(id, start_time, end_time, photographer_email) VALUES ('1', 'datetime.datetime(2022, 12, 1, 3, 9)', 'datetime.datetime(2022, 12, 22, 3, 9)', 'photo@email.com');")
     # cursor.execute("INSERT INTO appointment(id, confirmed, completed, time_id, package_id, photographer_email, client_email) VALUES ('1','1','1','1',' 1','photo@email.com','client@email.com');")
@@ -435,22 +435,24 @@ class FeedbackForm(ContactForm):
     id: int
     form_id: int
     invoice_id: int
+    
 
     CREATE = "INSERT INTO feedback_form (form_id, invoice_id) VALUES (?, ?)"
     EXISTS = "SELECT * FROM feedback_form WHERE invoice_id = ?"
     READ_ALL = "SELECT f.*, c.message, c.client_email, c.photographer_email FROM feedback_form f LEFT JOIN form c ON f.form_id = c.id WHERE c.photographer_email = ?"
 
+
     @staticmethod
     @tries_to_commit
-    def create(message: str, client_email: str, photographer_email: str, invoice_id: int) -> FeedbackForm:
+    def create(message: str, client_email: str, client_name: str, photographer_email: str, invoice_id: int) -> FeedbackForm:
         db = get_db()
-        contact_form = ContactForm.create(message, client_email, photographer_email)
+        contact_form = ContactForm.create(message, client_email, client_name, photographer_email)
         if not contact_form:
             raise Exception("contact form could not be created")
         c = db.execute(FeedbackForm.CREATE, (contact_form.id, invoice_id))
         db.commit()
         assert c.lastrowid is not None # TODO
-        return FeedbackForm(c.lastrowid, message, client_email, photographer_email, contact_form.id, invoice_id)
+        return FeedbackForm(c.lastrowid, message, client_email, client_name,photographer_email, contact_form.id, invoice_id)
     
     @staticmethod
     def exists(invoice_id: int) -> bool:

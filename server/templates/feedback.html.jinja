@@ -7,13 +7,19 @@ feedback
 {% block content %}
 
 {% if feedback_exists %}
-<p>you have already submitted feedback for this appointment!</p>
+<br>
+<br>
+<h1 id="contactHead">you have already submitted feedback for this appointment!</h1>
 {% else %}
-<div class="feedback-form">
+<div class="main-block">
     <form method="post">
-        <label for="message">leave some feedback for your appointment</label>
-        <input type="text" name="message" id="message" required>
-        <input type="submit" value="send">
+        <label for="message" id="contactHead">Leave some feedback for your session!</label>
+        <br>
+        <br>
+        <textarea style="float:left; margin-top:10px" name="message" rows="10" cols="3" id="message" required></textarea>
+        <div class="subButtonPos">
+            <input class = "subButton" style = "width:15%; padding:6px; margin-top: 20px" type="submit" value="send">
+        </div>
     </form>
 </div>
 {% endif %}

@@ -29,7 +29,7 @@
                 <p>Total Cost: <b>${{ appointment['pricing']}}</b></p>
                 <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
                 <br>
-                <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
+                <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id, client_name=appointment.client_name) }}">Show Invoice</a>
                 <br>
                 {% if is_photographer %}
                     <br>
