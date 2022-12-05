@@ -24,7 +24,7 @@
                 <p>Total Cost: <b>${{ appointment['pricing']}}</b></p>
                 <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
                 <br>
-                <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
+                <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id, client_name=appointment.client_name) }}">Show Invoice</a>
                 <br>
                 <br>
                 {% if is_photographer %}
@@ -95,12 +95,12 @@
                 <p>Total Cost: <b>${{ appointment['pricing']}}</b></p>
                 <p>Packages Chosen: <b>{{ appointment['items'] }}</b></p>
                 <br>
-                <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Show Invoice</a>
+                <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.feedback', invoice_id=appointment.id) }}">Feedback</a>
                 <br>
                 <br>
                 {% if user_type=="client" %}
                     <form action="{{ url_for('core.confirm_appt', appointment_id=appointment.id) }}" method="post">
-                        <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Feedback</a>
+                        <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.invoice', appointment_id=appointment.id) }}">Preview Invoice</a>
                     </form>
                 {% endif %}
                 <br>

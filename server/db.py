@@ -47,7 +47,7 @@ def init_db():
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden1.jpg', 'Nature');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden2.jpg', 'Nature');")
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden3.jpg', 'Nature');")
-    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo@email.com');")
+    cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo2@email.com');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
     cursor.close()
     db.commit()
@@ -410,13 +410,13 @@ class FeedbackForm(ContactForm):
 
     CREATE = "INSERT INTO feedback_form (form_id, invoice_id) VALUES (?, ?)"
     EXISTS = "SELECT * FROM feedback_form WHERE invoice_id = ?"
-    READ_ALL = "SELECT f.*, c.message, c.client_email, c.photographer_email FROM feedback_form f LEFT JOIN form c ON f.form_id = c.id WHERE c.photographer_email = ?"
+    READ_ALL = "SELECT f.*, c.message, c.client_email,c.client_name, c.photographer_email FROM feedback_form f LEFT JOIN form c ON f.form_id = c.id WHERE c.photographer_email = ?"
 
     @staticmethod
     @tries_to_commit
-    def create(message: str, client_email: str, photographer_email: str, invoice_id: int) -> FeedbackForm:
+    def create(message: str, client_email: str, client_name: str, photographer_email: str, invoice_id: int) -> FeedbackForm:
         db = get_db()
-        contact_form = ContactForm.create(message, client_email, photographer_email)
+        contact_form = ContactForm.create(message, client_email, client_name, photographer_email)
         if not contact_form:
             raise Exception("contact form could not be created")
         c = db.execute(FeedbackForm.CREATE, (contact_form.id, invoice_id))

@@ -329,8 +329,10 @@ def feedback(invoice_id: int):
     
     if not feedback_exists and request.method == 'POST':
         appointment = db.Appointment.read(invoice.appointment_id)
+        client = db.User.read(appointment.client_email)
+        client_name = client.name
         message = request.form['message']
-        db.FeedbackForm.create(message, appointment.client_email, appointment.photographer_email, invoice.id)
+        db.FeedbackForm.create(message, appointment.client_email, client_name, appointment.photographer_email, invoice.id)
         return redirect(url_for('.invoice', appointment_id=appointment.id))
 
     return render_template('feedback.html.jinja', invoice=invoice, feedback_exists=feedback_exists)
