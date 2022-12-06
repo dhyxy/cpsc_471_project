@@ -33,6 +33,11 @@ def appt():
         if user and user.type is db.UserType.CLIENT:
             user_type = "client"
     appointments = fetch_appointments(curr_user.email, is_photographer)
+    # for appointment in appointments:
+    #     if db.ClientAlbum.exists(appointment['id']):
+    #         print("Album exists")
+    #         c=db.ClientAlbum.read_all(appointment['id'])
+    #         print(c)
     return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, num_appt = len(appointments))
 
 @core.route('/register', methods=('GET', 'POST'))
@@ -128,6 +133,16 @@ def edit_gallery(email: str):
     photographer = db.User.read(email)
     albums = db.Album.read(email)
     return render_template('edit_gallery.html.jinja',user_type=user_type, curr_user=curr_user, photographer=photographer, albums=albums)
+
+@login_required
+@core.route('/view_client_photos/<int:appt_id>')
+def view_client_photos(appt_id: int):
+    global curr_user, user_type
+    email = db.Appointment.read(appt_id).photographer_email
+    album = db.Album.read(email)[0]
+    # album = db.ClientAlbum.read(appt_id)
+    return render_template('view_client_photos.html.jinja',user_type=user_type, curr_user=curr_user, album=album)
+
 
 @login_required
 @core.route("/edit_about/<email>", methods=('POST',)) 

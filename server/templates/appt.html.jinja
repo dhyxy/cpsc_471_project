@@ -107,6 +107,8 @@
                         </form>
                     {% else %}
                         <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.feedback', appt_id=appointment.id) }}">Feedback</a>
+                       
+                        <a style="padding:5px; text-decoration:none" class = "subButton" href="{{ url_for('core.view_client_photos', appt_id=appointment.id) }}">View Photos</a>
                     {% endif %}
                     <br>
                     <br>

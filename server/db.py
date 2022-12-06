@@ -356,7 +356,8 @@ class ClientAlbum(Album):
     client_email: str
 
     CREATE = "INSERT INTO client_album (album_name, appointment_id, client_email) VALUES (?, ?, ?)"
-    READNAME = "SELECT album_name FROM client_album WHERE appointment_id = ?"
+    EXISTS = "SELECT * FROM client_album WHERE appointment_id = ?"
+    READ = "SELECT * FROM client_album WHERE appointment_id = ?"
 
     @staticmethod                   
     @tries_to_commit
@@ -370,11 +371,19 @@ class ClientAlbum(Album):
         return ClientAlbum(album_name, release_type, photographer_email, album_name, appointment_id, client_email)
 
     @staticmethod
-    def readname(appt_id: int) -> str:
+    def exists(appt_id: int) -> bool:
+        db = get_db()
+        clientalbum = db.execute(ClientAlbum.EXISTS, (appt_id,)).fetchone()
+        return bool(clientalbum)
+    
+
+    @staticmethod
+    def read(appt_id: int) -> list[ClientAlbum]:
         db = get_db()
         print(appt_id)
-        name = db.execute(ClientAlbum.READNAME, (appt_id))
-        return name
+        data = db.execute(ClientAlbum.READ, (appt_id,))
+        album = [ClientAlbum(**row) for row in data]
+        return album
 
 @dataclass
 class Photo:

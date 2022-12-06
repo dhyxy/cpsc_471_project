@@ -1,0 +1,21 @@
+{% extends "base.html.jinja" %}
+
+
+{% block title %}Photos{% endblock %}
+{%set active_page = 'photos'%}
+{% block content %}
+
+<div class="gallery-container">
+    <h1 style="font-size: 40px">Shoot Photos</h1>
+
+    <h2 style="font-size: 30px"> {{ album.name }} </h2>                
+        <div style="margin-top: 15px" class="photos-container">
+            {% for photo in album.photos %}
+                <img src={{url_for('static', filename=photo.pathname)}}> 
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
