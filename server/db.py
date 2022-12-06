@@ -49,7 +49,7 @@ def init_db():
     cursor.execute("INSERT INTO photo(pathname, album_name) VALUES ('garden3.jpg', 'Nature');")
     cursor.execute("INSERT INTO package(pricing, items, photographer_email) VALUES (120, '1,2,3', 'photo@email.com'), (50, '4', 'photo2@email.com');")
     cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('client@email.com', 'password', 'client', '123', 'client');")
-    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('kln@email.com', 'password', 'client', '123', 'client');")
+    cursor.execute("INSERT INTO user(email, password, name, phone_number, type) VALUES ('c@email.com', 'password', 'client', '123', 'client');")
     cursor.close()
     db.commit()
 
@@ -355,9 +355,11 @@ class ClientAlbum(Album):
     appointment_id: int
     client_email: str
 
-    CREATE = "INSERT INTO client_album (album_name, appointment_id, client_email) VALUES (?, ?, ?)"
+    CREATE = "INSERT OR REPLACE INTO client_album (album_name, appointment_id, client_email) VALUES (?, ?, ?)"
     EXISTS = "SELECT * FROM client_album WHERE appointment_id = ?"
-    READ = "SELECT * FROM client_album WHERE appointment_id = ?"
+    READ = "SELECT c.*, a.name, a.release_type, a.photographer_email FROM client_album c LEFT JOIN album a ON a.name=c.album_name WHERE c.appointment_id = ?"
+
+
 
     @staticmethod                   
     @tries_to_commit

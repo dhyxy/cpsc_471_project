@@ -138,9 +138,10 @@ def edit_gallery(email: str):
 @core.route('/view_client_photos/<int:appt_id>')
 def view_client_photos(appt_id: int):
     global curr_user, user_type
-    email = db.Appointment.read(appt_id).photographer_email
-    album = db.Album.read(email)[0]
-    # album = db.ClientAlbum.read(appt_id)
+    # email = db.Appointment.read(appt_id).photographer_email
+    # album = db.Album.read(email)[0]
+    album = db.ClientAlbum.read(appt_id)[0]
+    print(album)
     return render_template('view_client_photos.html.jinja',user_type=user_type, curr_user=curr_user, album=album)
 
 
@@ -184,7 +185,7 @@ def add_client_album(appt_id: int):
         if user_type == "photographer":
             is_photographer = True
         appointments = fetch_appointments(curr_user.email, is_photographer)
-        clientalbums = db.ClientAlbum.readname(appt_id)
+        clientalbums = db.ClientAlbum.read(appt_id)
         print(clientalbums)
         return render_template('appt.html.jinja', is_photographer=is_photographer, user_type=user_type, appointments = appointments, num_appt = len(appointments))
     return render_template('add_client_album.html.jinja', user_type=user_type, curr_user=curr_user, photographer_email=curr_user.email, client_email=client_email, appt_id=appt_id)
